@@ -85,9 +85,9 @@ public class FileIOImpl implements FileIO {
 		String destFileName = FilenameUtils.removeExtension(destFileNameWithExt);
 		
 		File uniqueDestFile;
+		int i = 1;
 		
 		do {
-			int i = 1;
 			String uniqueDestFileName = destFileName + "[" + i + "]";
 			uniqueDestFile = new File(destFileParentDir + 
 					Constants.FILE_SEPERATOR + uniqueDestFileName + "." + destFileExt);

@@ -3,7 +3,6 @@ package com.jeetprksh.imgur.downloader.api.manager.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -62,8 +61,7 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 			count++;
 			try {
 				InputStream resourceInputStream = httpClientMgmt.getInputStreamForResource(url);
-				response = new ObjectMapper().readValue(resourceInputStream, 
-						new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
+				response = new ObjectMapper().readValue(resourceInputStream, new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
 				beforeListSize = allImgurObjectAttrs.size();
 				allImgurObjectAttrs = addUniqueImgurObjects(allImgurObjectAttrs, response.getData());
 				this.logger.info("Objects found :: " + response.getData().size());
@@ -72,7 +70,6 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 			} catch (IOException e) {
 				this.logger.severe("Exception in listing objects at URL: " + url);
 				e.printStackTrace();
-				break;
 			}
 		} while (beforeListSize != afterListSize);
 		
