@@ -3,12 +3,12 @@ package com.jeetprksh.imgur.downloader.api.manager.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.jeetprksh.imgur.downloader.api.manager.ObjectDownloader;
 import com.jeetprksh.imgur.downloader.api.manager.FileIO;
 import com.jeetprksh.imgur.downloader.api.manager.HttpClient;
+import com.jeetprksh.imgur.downloader.api.manager.ObjectDownloader;
 import com.jeetprksh.imgur.downloader.api.util.Constants;
 import com.jeetprksh.imgur.downloader.api.util.DownloadStatus;
 import com.jeetprksh.imgur.downloader.entity.ImgurObjectAttrs;
@@ -31,6 +31,8 @@ import com.jeetprksh.imgur.downloader.persistence.dto.ImgurObjectDTO;
 
 @Component
 public class ObjectDownloaderImpl implements ObjectDownloader {
+	
+	Logger logger = Logger.getLogger(ObjectDownloaderImpl.class.getName());
 
 	@Autowired HttpClient httpClientMgmt;
 	@Autowired FileIO fileMgmt;
@@ -49,30 +51,27 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		ImgurSubredditObjectsResponse response;
 		List<ImgurObjectAttrs> allImgurObjectAttrs = Lists.newArrayList();
 		
-		// TODO Loop with no terminating condition
-		for(int count=0; ; count++) {
+		int beforeListSize = 0;
+		int afterListSize = 0;
+		
+		do {
+			int count = 0;
 			url = constructImgurSubredditInfoUrl(imgurSearchQuery, count);
-			int beforeListSize;
-			int afterListSize;
-			System.out.print("REQUESTING INFO FOR :: " + url);
+			this.logger.info("REQUESTING INFO FOR :: " + url);
+			count++;
 			try {
 				InputStream resourceInputStream = httpClientMgmt.getInputStreamForResource(url);
-				response = new ObjectMapper().readValue(resourceInputStream, 
-						new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
+				response = new ObjectMapper().readValue(resourceInputStream, new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
 				beforeListSize = allImgurObjectAttrs.size();
 				allImgurObjectAttrs = addUniqueImgurObjects(allImgurObjectAttrs, response.getData());
-				System.out.println("Objects found :: " + response.getData().size());
+				this.logger.info("Objects found :: " + response.getData().size());
 				afterListSize = allImgurObjectAttrs.size();
-				System.out.println("SIZES :: " + beforeListSize + "  " + afterListSize);
-				if (beforeListSize == afterListSize) {
-					break;
-				}
+				this.logger.info("SIZES :: " + beforeListSize + "  " + afterListSize);
 			} catch (IOException e) {
-				System.out.println("Exception in listing objects at URL: " + url);
+				this.logger.severe("Exception in listing objects at URL: " + url);
 				e.printStackTrace();
-				break;
 			}
-		}
+		} while (beforeListSize != afterListSize);
 		
 		if (imgurSearchQuery.getSortOrder().equalsIgnoreCase("new")) {
 			Collections.reverse(allImgurObjectAttrs);
@@ -90,17 +89,17 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		boolean isSaved;
 		InputStream inputStream;
 		
-		System.out.println("DOWNLOADING THE OBJECTS :: " + allImgurObjectAttrs.size());
+		this.logger.info("DOWNLOADING THE OBJECTS :: " + allImgurObjectAttrs.size());
 		
 		for (ImgurObjectAttrs imgurObjectAttrs : allImgurObjectAttrs) {
 			
 			List<ImgurObjectDTO> imgurObjectDTOList = imgurObjectsDAO.getImgurObjectByHash(imgurObjectAttrs.getHash());
 			
 			if (imgurObjectDTOList.size()>0 && isObjectAlreadyDownloaded(imgurObjectAttrs, imgurObjectDTOList)) {
-				System.out.println("Imgur object with hash " + imgurObjectAttrs.getHash() + " already downloaded.");
+				this.logger.info("Imgur object with hash " + imgurObjectAttrs.getHash() + " already downloaded.");
 				continue;
 			}
-			System.out.println("DOWNLOADING :: " + imgurObjectAttrs.getTitle());
+			this.logger.info("DOWNLOADING :: " + imgurObjectAttrs.getTitle());
 			ImgurObjectDTO  imgurObjectDTO = new ImgurObjectDTO();
 			imgurObjectUrl = constructImgurObjectDownloadUrl(imgurObjectAttrs.getHash(), imgurObjectAttrs.getExt());
 			try {
@@ -121,7 +120,7 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 				// save DTO with failed status.
 				imgurObjectDTO.setDownloadstatus(DownloadStatus.FAILED.getId());
 				imgurObjectsDAO.addImgurObject(imgurObjectDTO);
-				System.out.println("Error occured in getting/saving resource :: " + imgurObjectUrl);
+				this.logger.info("Error occured in getting/saving resource :: " + imgurObjectUrl);
 			}
 		}
 		
@@ -216,7 +215,7 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 			isUnique = true;
 			for (ImgurObjectAttrs imgurObjectInTempList : tempList) {
 				if (imgurObjectAttrs.equals(imgurObjectInTempList)) {
-					System.out.print(imgurObjectAttrs.getHash() + ",");
+					this.logger.info(imgurObjectAttrs.getHash() + ",");
 					isUnique = false;
 					break;
 				}
@@ -225,14 +224,11 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 				targetList.add(imgurObjectAttrs);
 			}
 		}
-		System.out.println();
 		return targetList;
 	}
 	
 	private List<List<ImgurObjectAttrs>> chopImgurObjList(
 			List<ImgurObjectAttrs> allImgurObjectAttrs, int chunkSize) {
-		
-		System.out.println("CHOPPING THE LIST");
 		
 		List<List<ImgurObjectAttrs>> choppedList = Lists.newArrayList();
 		
@@ -245,37 +241,4 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		return choppedList;
 	}
 	
-}
-
-
-class ChunkTest {
-	public static void main(String[] args) {
-		List<String> arrayList = new ArrayList<String>();
-	    for (int i = 0; i < 23; i++) {
-	        arrayList.add(String.valueOf(i));
-	    }
-	    
-	    List<List<String>> choppedList = ChunkTest.chopImgurObjList(arrayList, 10);
-	    
-	    for (List<String> strList : choppedList) {
-	    	System.out.println("CHOPPED LIS SIZE :: " + strList.size());
-	    	
-	    	for (String str : strList) {
-	    		System.out.println(str);
-	    	}
-	    }
-	}
-	
-	private static List<List<String>> chopImgurObjList(List<String> allImgurObjectAttrs, int chunkSize) {
-		
-		List<List<String>> choppedList = Lists.newArrayList();
-		
-		for (int start = 0; start < allImgurObjectAttrs.size(); start += chunkSize) {
-	        int end = Math.min(start + chunkSize, allImgurObjectAttrs.size());
-	        List<String> sublist = allImgurObjectAttrs.subList(start, end);
-	        choppedList.add(sublist);
-	    }
-		
-		return choppedList;
-	}
 }

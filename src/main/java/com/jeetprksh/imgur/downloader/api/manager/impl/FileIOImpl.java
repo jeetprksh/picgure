@@ -3,6 +3,7 @@ package com.jeetprksh.imgur.downloader.api.manager.impl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -13,6 +14,8 @@ import com.jeetprksh.imgur.downloader.api.util.Constants;
 
 @Component
 public class FileIOImpl implements FileIO {
+	
+	Logger logger = Logger.getLogger(HttpClientImpl.class.getName());
 	
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.
@@ -35,12 +38,12 @@ public class FileIOImpl implements FileIO {
 		
 		try {
 			// Only create directory if it does not exists.
-			if (!destFolder.exists()){
+			if (!destFolder.exists()) {
 				destFolder.mkdirs();
 			}
 			
 			// If destination file already exists then give it a unique name
-			if (destFile.exists()){
+			if (destFile.exists()) {
 				destFile = createUniqueFile(destFile);
 			}
 			destFile.createNewFile();
@@ -51,7 +54,7 @@ public class FileIOImpl implements FileIO {
 			isSaved = true;
 		} catch (Exception e) {
 			isSaved = false;
-			System.out.println("Error occured in saving file ::  " + destFileUrl);
+			this.logger.severe("Error occured in saving file ::  " + destFileUrl);
 		}
 		
 		return isSaved;
@@ -64,13 +67,13 @@ public class FileIOImpl implements FileIO {
 	 * @return
 	 */
 	@Override
-	public String replaceIllegalCharsInFileName(String name){
+	public String replaceIllegalCharsInFileName(String name) {
 		return name.replaceAll("[\\/:*?<>|\"]", "_");
 	}
 	
 	/**
 	 * Returns a file object which contains a unique file name.
-	 * Invoker of this function needs to check if the file with that particular name exists.
+	 * Client of this function first need to check if the file with that particular name exists.
 	 * 
 	 * @param destFile
 	 * @return File
@@ -82,15 +85,14 @@ public class FileIOImpl implements FileIO {
 		String destFileName = FilenameUtils.removeExtension(destFileNameWithExt);
 		
 		File uniqueDestFile;
+		int i = 1;
 		
-		for (int i=1; ; i++){
+		do {
 			String uniqueDestFileName = destFileName + "[" + i + "]";
-			uniqueDestFile = new File(destFileParentDir + Constants.FILE_SEPERATOR + 
-										uniqueDestFileName + "." + destFileExt);
-			if (!uniqueDestFile.exists()){
-				break;
-			}
-		}
+			uniqueDestFile = new File(destFileParentDir + 
+					Constants.FILE_SEPERATOR + uniqueDestFileName + "." + destFileExt);
+			i++;
+		} while (uniqueDestFile.exists());
 		
 		return uniqueDestFile;
 	}
