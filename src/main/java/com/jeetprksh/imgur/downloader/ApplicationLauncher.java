@@ -1,49 +1,23 @@
 package com.jeetprksh.imgur.downloader;
 
-import java.util.List;
-import java.util.logging.Logger;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.jline.utils.AttributedString;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.shell.jline.PromptProvider;
 
-import com.jeetprksh.imgur.downloader.api.manager.ObjectDownloader;
-import com.jeetprksh.imgur.downloader.entity.ImgurObjectAttrs;
-import com.jeetprksh.imgur.downloader.entity.ImgurSearchQuery;
-
+@Configuration
 @SpringBootApplication
-public class ApplicationLauncher implements CommandLineRunner {
-	
-	Logger logger = Logger.getLogger(ApplicationLauncher.class.getName());
-	
-	@Autowired
-	ObjectDownloader manager;
+public class ApplicationLauncher {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ApplicationLauncher.class, args);
 	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery();
-		
-		imgurSearchQuery.setBase("r");
-		imgurSearchQuery.setRedditName("right");
-		imgurSearchQuery.setSortOrder("new");
-		
-		List<ImgurObjectAttrs> allImgurObjectAttrs = manager.listAllObjectInSubreddit(imgurSearchQuery);
-		
-		this.logger.info("List size :: " + allImgurObjectAttrs.size());
-		
-		// Calculate overall size
-		long size = 0;
-		for (ImgurObjectAttrs imgurObject : allImgurObjectAttrs) {
-			size += imgurObject.getSize();
-		}
-		this.logger.info("Overall Size :: " + size);
-		
-		manager.poolDownloadAllImgurObjectsInSubreddit(allImgurObjectAttrs);
-		
+	
+	@Bean
+	public PromptProvider promptProvider() {
+	    return () -> new AttributedString("picgure > ");
 	}
+
 }
