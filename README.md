@@ -1,1 +1,1 @@
-# imgur-downloader
+# Picgure
