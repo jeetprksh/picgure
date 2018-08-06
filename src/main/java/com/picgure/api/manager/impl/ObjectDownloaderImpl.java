@@ -26,17 +26,17 @@ import com.picgure.api.util.DownloadStatus;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.entity.ImgurSubredditObjectsResponse;
-import com.picgure.persistence.dao.ImgurObjectsDAO;
+import com.picgure.persistence.dao.ImgurObjectRepository;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
 @Component
 public class ObjectDownloaderImpl implements ObjectDownloader {
 	
-	Logger logger = Logger.getLogger(ObjectDownloaderImpl.class.getName());
+	private Logger logger = Logger.getLogger(ObjectDownloaderImpl.class.getName());
 
 	@Autowired HttpClient httpClientMgmt;
 	@Autowired FileIO fileMgmt;
-	@Autowired ImgurObjectsDAO imgurObjectsDAO;
+	@Autowired ImgurObjectRepository repo;
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
@@ -93,7 +93,7 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		
 		for (ImgurObjectAttrs imgurObjectAttrs : allImgurObjectAttrs) {
 			
-			List<ImgurObjectDTO> imgurObjectDTOList = imgurObjectsDAO.getImgurObjectByHash(imgurObjectAttrs.getHash());
+			List<ImgurObjectDTO> imgurObjectDTOList = repo.findByObjecthash(imgurObjectAttrs.getHash());
 			
 			if (imgurObjectDTOList.size()>0 && isObjectAlreadyDownloaded(imgurObjectAttrs, imgurObjectDTOList)) {
 				this.logger.info("Imgur object with hash " + imgurObjectAttrs.getHash() + " already downloaded.");
@@ -115,11 +115,11 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 					imgurObjectDTO.setDownloadstatus(DownloadStatus.FAILED.getId());
 				}
 				
-				imgurObjectsDAO.addImgurObject(imgurObjectDTO);
+				repo.save(imgurObjectDTO);
 			} catch (Exception e) {
 				// save DTO with failed status.
 				imgurObjectDTO.setDownloadstatus(DownloadStatus.FAILED.getId());
-				imgurObjectsDAO.addImgurObject(imgurObjectDTO);
+				repo.save(imgurObjectDTO);
 				this.logger.info("Error occured in getting/saving resource :: " + imgurObjectUrl);
 			}
 		}
