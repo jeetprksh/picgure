@@ -2,18 +2,13 @@ package com.picgure.entity;
 
 public class ImgurSearchQuery {
 	
-	private String base;
-	
 	private String redditName;
 	
 	private String sortOrder;
 
-	public String getBase() {
-		return base;
-	}
-
-	public void setBase(String base) {
-		this.base = base;
+	public ImgurSearchQuery(String redditName, String sortOrder) {
+		this.redditName = redditName;
+		this.sortOrder = sortOrder;
 	}
 
 	public String getRedditName() {
@@ -31,5 +26,12 @@ public class ImgurSearchQuery {
 	public void setSortOrder(String sortOrder) {
 		this.sortOrder = sortOrder;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "ImgurSearchQuery{" +
+				"redditName='" + redditName + '\'' +
+				", sortOrder='" + sortOrder + '\'' +
+				'}';
+	}
 }

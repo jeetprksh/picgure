@@ -21,27 +21,23 @@ public class DownloadCommand {
 	ObjectDownloader manager;
 
 	@ShellMethod("Download images.")
-    public void download(@ShellOption(defaultValue="r") String base,
-    		@ShellOption String redditName, @ShellOption(defaultValue="new") String order) {
-		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery();
-		
-		imgurSearchQuery.setBase(base);
-		imgurSearchQuery.setRedditName(redditName);
-		imgurSearchQuery.setSortOrder(order);
-		
+    public void download(@ShellOption String redditName,
+                         @ShellOption(defaultValue="new") String order) {
+
+		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, order);
 		logger.info("OBJECT :: " + imgurSearchQuery);
 		
 		List<ImgurObjectAttrs> allImgurObjectAttrs = manager.listAllObjectInSubreddit(imgurSearchQuery);
-		
+
 		logger.info("List size :: " + allImgurObjectAttrs.size());
-		
+
 		// Calculate overall size
 		long size = 0;
 		for (ImgurObjectAttrs imgurObject : allImgurObjectAttrs) {
 			size += imgurObject.getSize();
 		}
 		logger.info("Overall Size :: " + size);
-		
+
 		manager.poolDownloadAllImgurObjectsInSubreddit(allImgurObjectAttrs);
     }
 	
