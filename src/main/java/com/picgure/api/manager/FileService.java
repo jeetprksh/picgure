@@ -2,7 +2,7 @@ package com.picgure.api.manager;
 
 import java.io.InputStream;
 
-public interface FileIO {
+public interface FileService {
 	
 	public boolean saveImgurObjectAsFile(String subredditFolderName, String fileName, InputStream is);
 	

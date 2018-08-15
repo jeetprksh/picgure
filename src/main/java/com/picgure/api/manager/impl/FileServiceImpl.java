@@ -9,13 +9,13 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Component;
 
-import com.picgure.api.manager.FileIO;
+import com.picgure.api.manager.FileService;
 import com.picgure.api.util.Constants;
 
 @Component
-public class FileIOImpl implements FileIO {
+public class FileServiceImpl implements FileService {
 	
-	Logger logger = Logger.getLogger(HttpClientImpl.class.getName());
+	Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());
 	
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.

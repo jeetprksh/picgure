@@ -11,12 +11,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Component;
 
-import com.picgure.api.manager.HttpClient;
+import com.picgure.api.manager.HttpClientService;
 
 @Component
-public class HttpClientImpl implements HttpClient {
+public class HttpClientServiceImpl implements HttpClientService {
 	
-	Logger logger = Logger.getLogger(HttpClientImpl.class.getName());
+	Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());
 
 	@Override
 	// TODO add the time out facility into HTTPClient
