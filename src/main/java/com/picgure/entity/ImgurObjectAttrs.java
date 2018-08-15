@@ -773,4 +773,16 @@ public class ImgurObjectAttrs {
 		}
 	}
 
+    @Override
+    public String toString() {
+        return "ImgurObjectAttrs{" +
+                "hash='" + hash + '\'' +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", mimetype='" + mimetype + '\'' +
+                ", subreddit='" + subreddit + '\'' +
+                ", description='" + description + '\'' +
+                ", createDatetime='" + createDatetime + '\'' +
+                '}';
+    }
 }

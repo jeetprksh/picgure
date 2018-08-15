@@ -10,6 +10,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.picgure.api.manager.ObjectService;
+import com.picgure.api.util.SaveStatus;
+import com.picgure.api.util.TranslateObjects;
+import com.picgure.api.util.UrlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -18,11 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.picgure.api.manager.FileIO;
-import com.picgure.api.manager.HttpClient;
-import com.picgure.api.manager.ObjectDownloader;
+import com.picgure.api.manager.FileService;
+import com.picgure.api.manager.HttpClientService;
 import com.picgure.api.util.Constants;
-import com.picgure.api.util.DownloadStatus;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.entity.ImgurSubredditObjectsResponse;
@@ -30,22 +32,22 @@ import com.picgure.persistence.dao.ImgurObjectRepository;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
 @Component
-public class ObjectDownloaderImpl implements ObjectDownloader {
+public class ObjectServiceImpl implements ObjectService {
 	
-	private Logger logger = Logger.getLogger(ObjectDownloaderImpl.class.getName());
+	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
 
-	@Autowired HttpClient httpClientMgmt;
-	@Autowired FileIO fileMgmt;
-	@Autowired ImgurObjectRepository repo;
+	@Autowired HttpClientService httpClientService;
+	@Autowired FileService fileService;
+	@Autowired ImgurObjectRepository repository;
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public void downloadImgurObjectByHash(String hash) throws Exception {
-		
+		// TODO
 	}
 	
 	@Override
-	public List<ImgurObjectAttrs> listAllObjectInSubreddit(ImgurSearchQuery imgurSearchQuery) {
+	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery) {
 		
 		String url;
 		ImgurSubredditObjectsResponse response;
@@ -56,12 +58,12 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		
 		do {
 			int count = 0;
-			url = constructImgurSubredditInfoUrl(imgurSearchQuery, count);
+			url = UrlUtil.constructImgurSubredditInfoUrl(imgurSearchQuery, count);
 			this.logger.info("REQUESTING INFO FOR :: " + url);
 			count++;
 			try {
-				InputStream resourceInputStream = httpClientMgmt.getInputStreamForResource(url);
-				response = new ObjectMapper().readValue(resourceInputStream, new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
+				InputStream inputStream = httpClientService.getInputStreamForResource(url);
+				response = new ObjectMapper().readValue(inputStream, new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
 				beforeListSize = allImgurObjectAttrs.size();
 				allImgurObjectAttrs = addUniqueImgurObjects(allImgurObjectAttrs, response.getData());
 				this.logger.info("Objects found :: " + response.getData().size());
@@ -93,7 +95,7 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		
 		for (ImgurObjectAttrs imgurObjectAttrs : allImgurObjectAttrs) {
 			
-			List<ImgurObjectDTO> imgurObjectDTOList = repo.findByObjecthash(imgurObjectAttrs.getHash());
+			List<ImgurObjectDTO> imgurObjectDTOList = repository.findByObjecthash(imgurObjectAttrs.getHash());
 			
 			if (imgurObjectDTOList.size()>0 && isObjectAlreadyDownloaded(imgurObjectAttrs, imgurObjectDTOList)) {
 				this.logger.info("Imgur object with hash " + imgurObjectAttrs.getHash() + " already downloaded.");
@@ -101,25 +103,25 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 			}
 			this.logger.info("DOWNLOADING :: " + imgurObjectAttrs.getTitle());
 			ImgurObjectDTO  imgurObjectDTO = new ImgurObjectDTO();
-			imgurObjectUrl = constructImgurObjectDownloadUrl(imgurObjectAttrs.getHash(), imgurObjectAttrs.getExt());
+			imgurObjectUrl = UrlUtil.constructImgurObjectDownloadUrl(imgurObjectAttrs.getHash(), imgurObjectAttrs.getExt());
 			try {
-				imgurObjectDTO = populateImgurObjectDTO(imgurObjectAttrs);
+				imgurObjectDTO = TranslateObjects.getImgurObjectDTO(imgurObjectAttrs);
 
-				inputStream = httpClientMgmt.getInputStreamForResource(imgurObjectUrl);
-				isSaved = fileMgmt.saveImgurObjectAsFile(imgurObjectAttrs.getSubreddit(), 
-						fileMgmt.replaceIllegalCharsInFileName(imgurObjectAttrs.getTitle() + imgurObjectAttrs.getExt()), inputStream);
+				String cleanedFileName = fileService.replaceIllegalCharsInFileName(imgurObjectAttrs.getTitle() + imgurObjectAttrs.getExt());
+				inputStream = httpClientService.getInputStreamForResource(imgurObjectUrl);
+				isSaved = fileService.saveImgurObjectAsFile(imgurObjectAttrs.getSubreddit(), cleanedFileName, inputStream);
 				
 				if (isSaved) {
-					imgurObjectDTO.setDownloadstatus(DownloadStatus.DOWNLOADED.getId());
+					imgurObjectDTO.setSavedstatus(SaveStatus.SAVED.getId());
 				} else {
-					imgurObjectDTO.setDownloadstatus(DownloadStatus.FAILED.getId());
+					imgurObjectDTO.setSavedstatus(SaveStatus.FAILED.getId());
 				}
 				
-				repo.save(imgurObjectDTO);
+				repository.save(imgurObjectDTO);
 			} catch (Exception e) {
 				// save DTO with failed status.
-				imgurObjectDTO.setDownloadstatus(DownloadStatus.FAILED.getId());
-				repo.save(imgurObjectDTO);
+				imgurObjectDTO.setSavedstatus(SaveStatus.FAILED.getId());
+				repository.save(imgurObjectDTO);
 				this.logger.info("Error occured in getting/saving resource :: " + imgurObjectUrl);
 			}
 		}
@@ -128,12 +130,12 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class, isolation=Isolation.READ_UNCOMMITTED, readOnly=false)
-	public void poolDownloadAllImgurObjectsInSubreddit(List<ImgurObjectAttrs> allImgurObjectAttrs) {
+	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) {
 		
-		List<List<ImgurObjectAttrs>> choppedList = chopImgurObjList(allImgurObjectAttrs, Constants.DEFAULT_LIST_CHOP_SIZE);		// TODO make the chunk size dynamic
+		List<List<ImgurObjectAttrs>> choppedList = chopImgurObjList(allImgurObjectAttrs, Constants.DEFAULT_LIST_CHOP_SIZE);
 		
 		try {
-			ExecutorService pool = Executors.newFixedThreadPool(Constants.DEFAULT_NO_OF_DOWNLOAD_THREADS);				// TODO make the tread pool size dynamic
+			ExecutorService pool = Executors.newFixedThreadPool(Constants.DEFAULT_NO_OF_DOWNLOAD_THREADS);
 			for (List<ImgurObjectAttrs> imgurObjectAttrsList : choppedList) {
 				pool.submit(() -> downloadAllImgurObjectsInSubreddit(imgurObjectAttrsList));
 			}
@@ -144,54 +146,28 @@ public class ObjectDownloaderImpl implements ObjectDownloader {
 		}
 		
 	}
-	
+
+	@Override
+	public List<ImgurObjectAttrs> searchObjectsByTitle(String title, String subReddit) {
+		List<ImgurObjectDTO> dtos = repository.searchByTitle(title, subReddit);
+		List<ImgurObjectAttrs> attrs = Lists.newArrayList();
+		for (ImgurObjectDTO dto : dtos) {
+			attrs.add(TranslateObjects.getImgurObject(dto));
+		}
+		return attrs;
+	}
+
 	private boolean isObjectAlreadyDownloaded(ImgurObjectAttrs imgurObjectAttrs, 
 			List<ImgurObjectDTO> imgurObjectDTOList) {
 		boolean isDownloaded = false;
 		for (ImgurObjectDTO dto : imgurObjectDTOList) {
-			if (dto.getDownloadstatus() == DownloadStatus.DOWNLOADED.getId() && dto.getTitle().equals(imgurObjectAttrs.getTitle()) && 
+			if (dto.getSavedstatus() == SaveStatus.SAVED.getId() && dto.getTitle().equals(imgurObjectAttrs.getTitle()) &&
 					dto.getSize().intValue() == imgurObjectAttrs.getSize().intValue()) {
 				isDownloaded = true;
 				break;
 			}
 		}
 		return isDownloaded;
-	}
-
-	private ImgurObjectDTO populateImgurObjectDTO(ImgurObjectAttrs imgurObjectAttrs) {
-		ImgurObjectDTO dto = new ImgurObjectDTO();
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		
-		dto.setDateadded(timestamp);
-		//dto.setDatecreated(imgurObjectAttrs.getCreateDatetime());		// TODO get it working
-		dto.setDescription(imgurObjectAttrs.getDescription());
-		dto.setExtension(imgurObjectAttrs.getExt());
-		dto.setHeight(imgurObjectAttrs.getHeight().longValue());
-		dto.setIsanimated(imgurObjectAttrs.getAnimated());
-		dto.setMimetype(imgurObjectAttrs.getMimetype());
-		dto.setObjecthash(imgurObjectAttrs.getHash());
-		dto.setObjectid(imgurObjectAttrs.getId().longValue());
-		dto.setReddit(imgurObjectAttrs.getReddit());
-		dto.setSize(imgurObjectAttrs.getSize().longValue());
-		dto.setSubreddit(imgurObjectAttrs.getSubreddit());
-		dto.setTitle(imgurObjectAttrs.getTitle());
-		dto.setWidth(imgurObjectAttrs.getWidth().longValue());
-		
-		return dto;
-	}
-	
-	private String constructImgurSubredditInfoUrl(ImgurSearchQuery imgurSearchQuery, Integer index) {
-		
-		// http://imgur.com/r/right/new/page/234.json
-		return Constants.IMGUR_API_SUBREDDIT_INFO_BASE_URL + Constants.FILE_SEPERATOR + Constants.IMGUR_BASE +
-				Constants.FILE_SEPERATOR + imgurSearchQuery.getRedditName() + Constants.FILE_SEPERATOR +
-				imgurSearchQuery.getSortOrder() + Constants.FILE_SEPERATOR + "page" + Constants.FILE_SEPERATOR +
-				index.toString() + ".json";
-		
-	}
-	
-	private String constructImgurObjectDownloadUrl(String hash, String ext) {
-		return Constants.IMGUR_OBJECT_DOWNLOAD_BASE_URL + Constants.FILE_SEPERATOR + hash + ext;
 	}
 	
 	private List<ImgurObjectAttrs> addUniqueImgurObjects(List<ImgurObjectAttrs> targetList,

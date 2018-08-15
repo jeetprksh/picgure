@@ -1,5 +1,7 @@
 package com.picgure.persistence.dto;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -19,7 +21,10 @@ import javax.persistence.Table;
 public class ImgurObjectDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private Timestamp dateadded;
+	private String author;
+
+	@CreationTimestamp
+	private Timestamp dateDownloaded;
 
 	private Timestamp datecreated;
 
@@ -27,7 +32,7 @@ public class ImgurObjectDTO implements Serializable {
 
 	private String extension;
 
-	private Long height;
+	private Integer height;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -39,29 +44,39 @@ public class ImgurObjectDTO implements Serializable {
 
 	private String objecthash;
 
-	private Long objectid;
+	private Integer objectid;
 
 	private String reddit;
 
-	private Long size;
+	private int savedstatus;
+
+	private String section;
+
+	private Integer size;
 
 	private String subreddit;
 
 	private String title;
 
-	private Long width;
-	
-	private Integer downloadstatus;
+	private Integer width;
 
 	public ImgurObjectDTO() {
 	}
 
-	public Timestamp getDateadded() {
-		return this.dateadded;
+	public String getAuthor() {
+		return author;
 	}
 
-	public void setDateadded(Timestamp dateadded) {
-		this.dateadded = dateadded;
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public Timestamp getDateDownloaded() {
+		return this.dateDownloaded;
+	}
+
+	public void setDateDownloaded(Timestamp dateDownloaded) {
+		this.dateDownloaded = dateDownloaded;
 	}
 
 	public Timestamp getDatecreated() {
@@ -88,11 +103,11 @@ public class ImgurObjectDTO implements Serializable {
 		this.extension = extension;
 	}
 
-	public Long getHeight() {
+	public Integer getHeight() {
 		return this.height;
 	}
 
-	public void setHeight(Long height) {
+	public void setHeight(Integer height) {
 		this.height = height;
 	}
 
@@ -128,11 +143,11 @@ public class ImgurObjectDTO implements Serializable {
 		this.objecthash = objecthash;
 	}
 
-	public Long getObjectid() {
+	public Integer getObjectid() {
 		return this.objectid;
 	}
 
-	public void setObjectid(Long objectid) {
+	public void setObjectid(Integer objectid) {
 		this.objectid = objectid;
 	}
 
@@ -144,11 +159,19 @@ public class ImgurObjectDTO implements Serializable {
 		this.reddit = reddit;
 	}
 
-	public Long getSize() {
+	public String getSection() {
+		return section;
+	}
+
+	public void setSection(String section) {
+		this.section = section;
+	}
+
+	public Integer getSize() {
 		return this.size;
 	}
 
-	public void setSize(Long size) {
+	public void setSize(Integer size) {
 		this.size = size;
 	}
 
@@ -168,20 +191,20 @@ public class ImgurObjectDTO implements Serializable {
 		this.title = title;
 	}
 
-	public Long getWidth() {
+	public Integer getWidth() {
 		return this.width;
 	}
 
-	public void setWidth(Long width) {
+	public void setWidth(Integer width) {
 		this.width = width;
 	}
 	
-	public int getDownloadstatus() {
-		return downloadstatus;
+	public int getSavedstatus() {
+		return savedstatus;
 	}
 
-	public void setDownloadstatus(int downloadstatus) {
-		this.downloadstatus = downloadstatus;
+	public void setSavedstatus(int savedstatus) {
+		this.savedstatus = savedstatus;
 	}
 
 }

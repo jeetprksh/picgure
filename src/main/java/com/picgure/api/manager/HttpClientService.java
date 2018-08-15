@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import org.apache.http.client.ClientProtocolException;
 
-public interface HttpClient {
+public interface HttpClientService {
 	
 	public InputStream getInputStreamForResource(String url) throws ClientProtocolException, IOException;
 
