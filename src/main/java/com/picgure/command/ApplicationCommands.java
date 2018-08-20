@@ -3,6 +3,7 @@ package com.picgure.command;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
@@ -20,6 +21,9 @@ public class ApplicationCommands {
 	
 	@Autowired
 	ObjectService objectService;
+
+	@Autowired
+	SettingsService settingsService;
 
 	@ShellMethod("Download images.")
     public void download(@ShellOption String redditName,
@@ -64,6 +68,11 @@ public class ApplicationCommands {
 		for (ImgurObjectAttrs attr : attrs) {
 			logger.info(attr.toString());
 		}
+	}
+
+	@ShellMethod("save teh default values")
+	public void save() {
+		settingsService.saveDefaultSettings();
 	}
 	
 }
