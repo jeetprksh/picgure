@@ -14,5 +14,7 @@ public class Constants {
 	
 	public static final int DEFAULT_LIST_CHOP_SIZE = 10;
 	public static final int DEFAULT_NO_OF_DOWNLOAD_THREADS = 20;
+
+	public static final String BLANK_STRING = "";
 	
 }

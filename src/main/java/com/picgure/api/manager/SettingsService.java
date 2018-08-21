@@ -14,4 +14,6 @@ public interface SettingsService {
 
     public void saveSetting(Map<String, String> setting);
 
+    public void updateSetting(String name, String value);
+
 }

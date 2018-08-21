@@ -60,7 +60,7 @@ public class ApplicationCommands {
 		logger.info("There are " + allImgurObjectAttrs.size() + " objects with overall size of " + size + " on " + redditName);
 	}
 
-	@ShellMethod("Analyse if a particular reddit is already downloaded")
+	@ShellMethod("Analyse local storage for whether a particular reddit is already downloaded")
 	public void analysis(@ShellOption String reddit,
 						 @ShellOption String title) {
 		logger.info(reddit + " " + title);
@@ -70,9 +70,15 @@ public class ApplicationCommands {
 		}
 	}
 
-	@ShellMethod("save teh default values")
-	public void save() {
-		settingsService.saveDefaultSettings();
+	@ShellMethod("See and update application settings")
+	public void settings(@ShellOption(defaultValue = Constants.BLANK_STRING) String setting,
+						 @ShellOption(defaultValue = Constants.BLANK_STRING) String value) {
+		logger.info(setting + " " + value);
+		if (!setting.equals(Constants.BLANK_STRING)) {
+			settingsService.updateSetting(setting, value);
+		} else {
+			settingsService.printSettings();
+		}
 	}
 	
 }

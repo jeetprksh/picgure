@@ -43,6 +43,7 @@ public class SettingServiceImpl implements SettingsService {
 
     @Override
     public Map<String, String> getSettings() {
+        logger.info("Listing the settings");
         return
         StreamSupport.stream(repository.findAll().spliterator(), false)
                      .collect(Collectors.toMap(dto -> dto.getName(), dto -> dto.getValue()));
@@ -50,6 +51,7 @@ public class SettingServiceImpl implements SettingsService {
 
     @Override
     public void printSettings() {
+        logger.info("Printing the settings");
         this.getSettings().forEach((key, val) -> System.out.println(key.toString() + " " + val.toString()));
     }
 
@@ -57,6 +59,19 @@ public class SettingServiceImpl implements SettingsService {
     public void saveSetting(Map<String, String> settings) {
         logger.info("Saving the settings " + settings);
         settings.forEach((key, val) -> repository.save(new PicgureSettingDTO(key, val)));
+    }
+
+    @Override
+    public void updateSetting(String name, String value) {
+        logger.info("Updating the setting");
+        PicgureSettingDTO dto = repository.findByName(name);
+        if (dto != null) {
+            dto.setValue(value);
+            repository.save(dto);
+        } else {
+            logger.info("invalid setting name");
+        }
+        logger.info("Updated the setting " + dto.toString());
     }
 
     private List<PicgureSettingDTO> createDefaultSettings() {
