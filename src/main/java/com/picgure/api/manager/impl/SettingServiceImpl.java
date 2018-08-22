@@ -28,7 +28,14 @@ public class SettingServiceImpl implements SettingsService {
         List<PicgureSettingDTO> newDefaultSettings = Lists.newArrayList();
 
         for (PicgureSettingDTO defaultSettingDTO : createDefaultSettings()) {
-            if (!storedSetting.contains(defaultSettingDTO)) {
+            boolean have = false;
+            for (PicgureSettingDTO storedSettingDTO : storedSetting) {
+                if (storedSettingDTO.getName().equals(defaultSettingDTO.getName())) {
+                    have = true;
+                }
+            }
+
+            if (!have) {
                 newDefaultSettings.add(defaultSettingDTO);
             }
         }
