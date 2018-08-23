@@ -1,5 +1,6 @@
 package com.picgure.api.manager;
 
+import java.io.File;
 import java.io.InputStream;
 
 public interface FileService {
@@ -13,5 +14,9 @@ public interface FileService {
 	 * @return
 	 */
 	public String replaceIllegalCharsInFileName(String name);
+
+	public File defaultImageStoreDirectory();
+
+	public void createImageStoreDirectory(File imageStore);
 
 }

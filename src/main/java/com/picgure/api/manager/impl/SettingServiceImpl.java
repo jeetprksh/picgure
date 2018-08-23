@@ -1,6 +1,7 @@
 package com.picgure.api.manager.impl;
 
 import com.google.common.collect.Lists;
+import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
 import com.picgure.persistence.dao.PicgureSettingRepository;
@@ -8,6 +9,7 @@ import com.picgure.persistence.dto.PicgureSettingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -22,12 +24,15 @@ public class SettingServiceImpl implements SettingsService {
     @Autowired
     PicgureSettingRepository repository;
 
+    @Autowired
+    FileService fileService;
+
     @Override
     public void saveDefaultSettings() {
         List<PicgureSettingDTO> storedSetting = Lists.newArrayList(repository.findAll());
         List<PicgureSettingDTO> newDefaultSettings = Lists.newArrayList();
 
-        for (PicgureSettingDTO defaultSettingDTO : createDefaultSettings()) {
+        for (PicgureSettingDTO defaultSettingDTO : getDefaultSettings()) {
             boolean have = false;
             for (PicgureSettingDTO storedSettingDTO : storedSetting) {
                 if (storedSettingDTO.getName().equals(defaultSettingDTO.getName())) {
@@ -50,10 +55,11 @@ public class SettingServiceImpl implements SettingsService {
 
     @Override
     public Map<String, String> getSettings() {
-        logger.info("Listing the settings");
-        return
-        StreamSupport.stream(repository.findAll().spliterator(), false)
+        Map<String, String> settings =
+                StreamSupport.stream(repository.findAll().spliterator(), false)
                      .collect(Collectors.toMap(dto -> dto.getName(), dto -> dto.getValue()));
+        logger.info("Get settings " + settings);
+        return settings;
     }
 
     @Override
@@ -70,21 +76,25 @@ public class SettingServiceImpl implements SettingsService {
 
     @Override
     public void updateSetting(String name, String value) {
+        if (name.equalsIgnoreCase(Setting.ImageStore.toString())
+                && (!new File(value).isAbsolute())) {
+            System.out.println("Directory path must be absolute");
+            return;
+        }
         logger.info("Updating the setting");
         PicgureSettingDTO dto = repository.findByName(name);
         if (dto != null) {
             dto.setValue(value);
             repository.save(dto);
+            logger.info("Updated the setting " + dto.toString());
         } else {
-            logger.info("invalid setting name");
+            System.out.println("Invalid setting name");
         }
-        logger.info("Updated the setting " + dto.toString());
     }
 
-    private List<PicgureSettingDTO> createDefaultSettings() {
-        return Lists.newArrayList(new PicgureSettingDTO(Setting.ImageStorageDir.toString(), "imageStorage"),
-                                  new PicgureSettingDTO(Setting.LocalDBFile.toString(), "localDB"),
-                                  new PicgureSettingDTO(Setting.AreValuesDefault.toString(), "defvalues"));
+    private List<PicgureSettingDTO> getDefaultSettings() {
+        return Lists.newArrayList(new PicgureSettingDTO(Setting.ImageStore.toString(),
+                                        fileService.defaultImageStoreDirectory().getAbsolutePath()));
     }
 
 }
