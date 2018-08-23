@@ -15,7 +15,7 @@ import com.picgure.api.util.Constants;
 @Component
 public class FileServiceImpl implements FileService {
 	
-	Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());
+	Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
 	
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.
@@ -54,7 +54,7 @@ public class FileServiceImpl implements FileService {
 			isSaved = true;
 		} catch (Exception e) {
 			isSaved = false;
-			this.logger.severe("Error occured in saving file ::  " + destFileUrl);
+			this.logger.severe("Error occurred in saving file ::  " + destFileUrl);
 		}
 		
 		return isSaved;
@@ -70,7 +70,23 @@ public class FileServiceImpl implements FileService {
 	public String replaceIllegalCharsInFileName(String name) {
 		return name.replaceAll("[\\/:*?<>|\"]", "_");
 	}
-	
+
+	@Override
+	public File defaultImageStoreDirectory() {
+		String pathToHome = System.getProperty("user.home");
+		String pathToPicgureRoot = pathToHome + Constants.FILE_SEPERATOR + Constants.DEFAULT_ROOT_DIR_NAME;
+		File imageStore = new File(pathToPicgureRoot);
+		return imageStore;
+	}
+
+	@Override
+	public void createImageStoreDirectory(File imageStore) {
+		if (!imageStore.exists()){
+		    logger.info("Creating the image store at " + imageStore.getAbsolutePath());
+		    imageStore.mkdir();
+        }
+	}
+
 	/**
 	 * Returns a file object which contains a unique file name.
 	 * Client of this function first need to check if the file with that particular name exists.

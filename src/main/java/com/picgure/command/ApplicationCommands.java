@@ -3,6 +3,7 @@ package com.picgure.command;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
@@ -20,6 +21,9 @@ public class ApplicationCommands {
 	
 	@Autowired
 	ObjectService objectService;
+
+	@Autowired
+	SettingsService settingsService;
 
 	@ShellMethod("Download images.")
     public void download(@ShellOption String redditName,
@@ -56,13 +60,24 @@ public class ApplicationCommands {
 		logger.info("There are " + allImgurObjectAttrs.size() + " objects with overall size of " + size + " on " + redditName);
 	}
 
-	@ShellMethod("Analyse if a particular reddit is already downloaded")
+	@ShellMethod("Analyse local storage for whether a particular reddit is already downloaded")
 	public void analysis(@ShellOption String reddit,
 						 @ShellOption String title) {
 		logger.info(reddit + " " + title);
 		List<ImgurObjectAttrs> attrs = objectService.searchObjectsByTitle(title, reddit);
 		for (ImgurObjectAttrs attr : attrs) {
 			logger.info(attr.toString());
+		}
+	}
+
+	@ShellMethod("See and update application settings")
+	public void settings(@ShellOption(defaultValue = Constants.BLANK_STRING) String setting,
+						 @ShellOption(defaultValue = Constants.BLANK_STRING) String value) {
+		logger.info(setting + " " + value);
+		if (!setting.equals(Constants.BLANK_STRING)) {
+			settingsService.updateSetting(setting, value);
+		} else {
+			settingsService.printSettings();
 		}
 	}
 	
