@@ -16,7 +16,7 @@ public class TranslateObjects {
         dto.setIsanimated(attrs.getAnimated());
         dto.setMimetype(attrs.getMimetype());
         dto.setObjecthash(attrs.getHash());
-        dto.setObjectid(attrs.getId());
+        dto.setObjectid(attrs.getId().intValue());
         dto.setSection(attrs.getSection());
         dto.setReddit(attrs.getReddit());
         dto.setSize(attrs.getSize());
@@ -44,7 +44,7 @@ public class TranslateObjects {
         attr.setFavorited(null);
         attr.setHash(dto.getObjecthash());
         attr.setHeight(dto.getHeight());
-        attr.setId(dto.getObjectid());
+        attr.setId(dto.getObjectid().longValue());
         attr.setIsAlbum(null);
         attr.setLooping(null);
         attr.setMimetype(dto.getMimetype());
