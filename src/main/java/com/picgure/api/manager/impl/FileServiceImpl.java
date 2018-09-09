@@ -5,8 +5,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+import com.picgure.api.util.Setting;
+import com.picgure.persistence.dao.PicgureSettingRepository;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.picgure.api.manager.FileService;
@@ -16,20 +19,23 @@ import com.picgure.api.util.Constants;
 public class FileServiceImpl implements FileService {
 	
 	Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
+
+	@Autowired
+	PicgureSettingRepository settingsRepo;
 	
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.
 	 * Returns Boolean to tell the caller whether the object is saved or not.
 	 * 
-	 * @param subredditFolderName
+	 * @param subredditName
 	 * @param fileName
 	 * @param is
 	 * @return
 	 */
 	@Override
-	public boolean saveImgurObjectAsFile(String subredditFolderName, String fileName, InputStream is) {
-		
-		String destFolderUrl = Constants.DEFAULT_DOWNLOAD_DIR + Constants.FILE_SEPERATOR + subredditFolderName;
+	public boolean saveImgurObjectAsFile(String subredditName, String fileName, InputStream is) {
+
+		String destFolderUrl = this.getBaseDirectory() + Constants.FILE_SEPERATOR + subredditName;
 		String destFileUrl = destFolderUrl + Constants.FILE_SEPERATOR + fileName;
 		FileOutputStream fileOutputStream;
 		File destFolder = new File(destFolderUrl);
@@ -52,9 +58,10 @@ public class FileServiceImpl implements FileService {
 			fileOutputStream.close();
 			is.close();
 			isSaved = true;
+			logger.info("File saved " + destFileUrl);
 		} catch (Exception e) {
 			isSaved = false;
-			this.logger.severe("Error occurred in saving file ::  " + destFileUrl);
+			this.logger.severe("Error occurred in saving file " + destFileUrl);
 		}
 		
 		return isSaved;
@@ -111,6 +118,11 @@ public class FileServiceImpl implements FileService {
 		} while (uniqueDestFile.exists());
 		
 		return uniqueDestFile;
+	}
+
+	private String getBaseDirectory() {
+		String baseDir = settingsRepo.findByName(Setting.ImageStore.toString()).getValue();
+		return baseDir == null ? Constants.DEFAULT_DOWNLOAD_DIR : baseDir;
 	}
 
 }

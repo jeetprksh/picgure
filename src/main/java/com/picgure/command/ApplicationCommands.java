@@ -70,10 +70,9 @@ public class ApplicationCommands {
 		}
 	}
 
-	@ShellMethod("See and update application settings")
+	@ShellMethod("View and update application settings")
 	public void settings(@ShellOption(defaultValue = Constants.BLANK_STRING) String setting,
 						 @ShellOption(defaultValue = Constants.BLANK_STRING) String value) {
-		logger.info(setting + " " + value);
 		if (!setting.equals(Constants.BLANK_STRING)) {
 			settingsService.updateSetting(setting, value);
 		} else {
