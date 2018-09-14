@@ -15,8 +15,8 @@ import com.picgure.api.manager.HttpClientService;
 
 @Component
 public class HttpClientServiceImpl implements HttpClientService {
-	
-	Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());
+
+	private Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());
 
 	@Override
 	// TODO add the time out facility into HTTPClient

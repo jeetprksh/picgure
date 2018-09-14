@@ -1,33 +1,26 @@
 package com.picgure.command;
 
+import com.picgure.api.manager.ObjectService;
+import com.picgure.api.manager.SettingsService;
+import com.picgure.api.util.Constants;
+import com.picgure.entity.ImgurObjectAttrs;
+import com.picgure.entity.ImgurSearchQuery;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.picgure.api.manager.SettingsService;
-import com.picgure.api.util.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
-
-import com.picgure.api.manager.ObjectService;
-import com.picgure.entity.ImgurObjectAttrs;
-import com.picgure.entity.ImgurSearchQuery;
-
-@ShellComponent
 public class ApplicationCommands {
 	
 	private static Logger logger = Logger.getLogger(ApplicationCommands.class.getName());
 	
 	@Autowired
-	ObjectService objectService;
+	private ObjectService objectService;
 
 	@Autowired
-	SettingsService settingsService;
+	private SettingsService settingsService;
 
-	@ShellMethod("Download images.")
-    public void download(@ShellOption String redditName,
-                         @ShellOption(defaultValue=Constants.SORT_ORDER_NEW) String order) {
+    public void download(String redditName, String order) {
 
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, order);
 		logger.info("OBJECT :: " + imgurSearchQuery);
@@ -46,8 +39,7 @@ public class ApplicationCommands {
 		objectService.poolDownloadObjects(allImgurObjectAttrs);
     }
 
-    @ShellMethod("Probe a particular reddit for information.")
-    public void probe(@ShellOption String redditName) {
+    public void probe(String redditName) {
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, Constants.SORT_ORDER_NEW);
 
 		List<ImgurObjectAttrs> allImgurObjectAttrs = objectService.getObjectsInSubreddit(imgurSearchQuery);
@@ -60,9 +52,7 @@ public class ApplicationCommands {
 		logger.info("There are " + allImgurObjectAttrs.size() + " objects with overall size of " + size + " on " + redditName);
 	}
 
-	@ShellMethod("Analyse local storage for whether a particular reddit is already downloaded")
-	public void analysis(@ShellOption String reddit,
-						 @ShellOption String title) {
+	public void analysis(String reddit, String title) {
 		logger.info(reddit + " " + title);
 		List<ImgurObjectAttrs> attrs = objectService.searchObjectsByTitle(title, reddit);
 		for (ImgurObjectAttrs attr : attrs) {
@@ -70,9 +60,7 @@ public class ApplicationCommands {
 		}
 	}
 
-	@ShellMethod("View and update application settings")
-	public void settings(@ShellOption(defaultValue = Constants.BLANK_STRING) String setting,
-						 @ShellOption(defaultValue = Constants.BLANK_STRING) String value) {
+	public void settings(String setting, String value) {
 		if (!setting.equals(Constants.BLANK_STRING)) {
 			settingsService.updateSetting(setting, value);
 		} else {

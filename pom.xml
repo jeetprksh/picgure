@@ -30,12 +30,6 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		
-        <dependency>
-		    <groupId>org.springframework.shell</groupId>
-		    <artifactId>spring-shell-starter</artifactId>
-		    <version>2.0.0.RELEASE</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -68,18 +62,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		
-		<!-- Dependencies required by Spring Shell -->
-		<dependency>
-		    <groupId>javax.el</groupId>
-		    <artifactId>javax.el-api</artifactId>
-		    <version>3.0.0</version>
-		</dependency>
-		<dependency>
-		    <groupId>org.glassfish</groupId>
-		    <artifactId>javax.el</artifactId>
-		    <version>3.0.0</version>
 		</dependency>
 
 	</dependencies>

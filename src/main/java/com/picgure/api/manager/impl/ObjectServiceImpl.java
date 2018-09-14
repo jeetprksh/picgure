@@ -36,9 +36,9 @@ public class ObjectServiceImpl implements ObjectService {
 	
 	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
 
-	@Autowired HttpClientService httpClientService;
-	@Autowired FileService fileService;
-	@Autowired ImgurObjectRepository repository;
+	@Autowired private HttpClientService httpClientService;
+	@Autowired private FileService fileService;
+	@Autowired private ImgurObjectRepository repository;
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
