@@ -29,7 +29,7 @@ public class RootFrame extends JFrame {
     private void createFrame() {
         this.setSize(500, 300);
         this.setTitle("Picgure");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.add(mainInputPanel);
         this.setResizable(false);
@@ -56,6 +56,7 @@ public class RootFrame extends JFrame {
         settingsMenuItem.addActionListener((ActionEvent event) -> {
             logger.info("Opening Settings");
             this.settingsFrame.setVisible(true);
+            this.settingsFrame.loadSettings();
         });
         return settingsMenuItem;
     }

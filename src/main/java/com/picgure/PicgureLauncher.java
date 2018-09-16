@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import javax.swing.*;
 import java.util.logging.Logger;
 
 @Configuration
@@ -22,7 +23,7 @@ public class PicgureLauncher implements CommandLineRunner {
 
 	private static Logger logger = Logger.getLogger(PicgureLauncher.class.getName());
 
-	@Autowired private RootFrame frame;
+	@Autowired private RootFrame rootFrame;
 	
 	public static void main(String[] args) {
 		logger.info("Starting the Application.");
@@ -34,11 +35,12 @@ public class PicgureLauncher implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				frame.setVisible(true);
+		java.awt.EventQueue.invokeLater(() -> {
+			try {
+				rootFrame.setVisible(true);
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception ex) {
+				logger.severe("Unable to initialize UI");
 			}
 		});
 	}

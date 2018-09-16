@@ -6,19 +6,25 @@ import com.picgure.api.util.Constants;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.logging.Logger;
 
+@Component
 public class ApplicationCommands {
 	
 	private static Logger logger = Logger.getLogger(ApplicationCommands.class.getName());
-	
-	@Autowired
+
 	private ObjectService objectService;
+	private SettingsService settingsService;
 
 	@Autowired
-	private SettingsService settingsService;
+	public ApplicationCommands(ObjectService objectService,
+							   SettingsService settingsService) {
+		this.objectService = objectService;
+		this.settingsService = settingsService;
+	}
 
     public void download(String redditName, String order) {
 
@@ -39,7 +45,7 @@ public class ApplicationCommands {
 		objectService.poolDownloadObjects(allImgurObjectAttrs);
     }
 
-    public void probe(String redditName) {
+    public String probe(String redditName) {
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, Constants.SORT_ORDER_NEW);
 
 		List<ImgurObjectAttrs> allImgurObjectAttrs = objectService.getObjectsInSubreddit(imgurSearchQuery);
@@ -49,7 +55,9 @@ public class ApplicationCommands {
 		for (ImgurObjectAttrs imgurObject : allImgurObjectAttrs) {
 			size += imgurObject.getSize();
 		}
-		logger.info("There are " + allImgurObjectAttrs.size() + " objects with overall size of " + size + " on " + redditName);
+		String message = "There are " + allImgurObjectAttrs.size() + " objects with overall size of " + size + " on " + redditName;
+		logger.info(message);
+		return message;
 	}
 
 	public void analysis(String reddit, String title) {
