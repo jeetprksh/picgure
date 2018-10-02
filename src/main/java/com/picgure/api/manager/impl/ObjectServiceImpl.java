@@ -1,8 +1,27 @@
 package com.picgure.api.manager.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.picgure.api.manager.FileService;
+import com.picgure.api.manager.HttpClientService;
+import com.picgure.api.manager.ObjectService;
+import com.picgure.api.util.Constants;
+import com.picgure.api.util.SaveStatus;
+import com.picgure.api.util.TranslateObjects;
+import com.picgure.api.util.UrlUtil;
+import com.picgure.entity.ImgurObjectAttrs;
+import com.picgure.entity.ImgurSearchQuery;
+import com.picgure.entity.ImgurSubredditObjectsResponse;
+import com.picgure.persistence.dao.ImgurObjectRepository;
+import com.picgure.persistence.dto.ImgurObjectDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -10,35 +29,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import com.picgure.api.manager.ObjectService;
-import com.picgure.api.util.SaveStatus;
-import com.picgure.api.util.TranslateObjects;
-import com.picgure.api.util.UrlUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.picgure.api.manager.FileService;
-import com.picgure.api.manager.HttpClientService;
-import com.picgure.api.util.Constants;
-import com.picgure.entity.ImgurObjectAttrs;
-import com.picgure.entity.ImgurSearchQuery;
-import com.picgure.entity.ImgurSubredditObjectsResponse;
-import com.picgure.persistence.dao.ImgurObjectRepository;
-import com.picgure.persistence.dto.ImgurObjectDTO;
-
 @Component
 public class ObjectServiceImpl implements ObjectService {
 	
 	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
 
-	@Autowired private HttpClientService httpClientService;
-	@Autowired private FileService fileService;
-	@Autowired private ImgurObjectRepository repository;
+	private HttpClientService httpClientService;
+	private FileService fileService;
+	private ImgurObjectRepository repository;
+
+	@Autowired
+	public ObjectServiceImpl(HttpClientService httpClientService,
+                             FileService fileService,
+                             ImgurObjectRepository repository) {
+        this.httpClientService = httpClientService;
+        this.fileService = fileService;
+        this.repository = repository;
+	}
 	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
@@ -148,8 +155,8 @@ public class ObjectServiceImpl implements ObjectService {
 	}
 
 	@Override
-	public List<ImgurObjectAttrs> searchObjectsByTitle(String title, String subReddit) {
-		List<ImgurObjectDTO> dtos = repository.searchByTitle(title, subReddit);
+	public List<ImgurObjectAttrs> searchLocalRepoByTitleAndReddit(String title, String reddit) {
+		List<ImgurObjectDTO> dtos = repository.search(title, reddit);
 		List<ImgurObjectAttrs> attrs = Lists.newArrayList();
 		for (ImgurObjectDTO dto : dtos) {
 			attrs.add(TranslateObjects.getImgurObject(dto));

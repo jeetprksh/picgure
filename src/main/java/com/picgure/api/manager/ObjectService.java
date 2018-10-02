@@ -1,9 +1,9 @@
 package com.picgure.api.manager;
 
-import java.util.List;
-
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
+
+import java.util.List;
 
 public interface ObjectService {
 	
@@ -15,5 +15,5 @@ public interface ObjectService {
 	
 	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery);
 
-	public List<ImgurObjectAttrs> searchObjectsByTitle(String searchParam, String subReddit);
+	public List<ImgurObjectAttrs> searchLocalRepoByTitleAndReddit(String title, String reddit);
 }

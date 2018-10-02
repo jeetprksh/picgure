@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.logging.Logger;
 
@@ -25,7 +24,6 @@ public class MainInputPanel extends JPanel {
                           ApplicationCommands applicationCommands) {
         this.probeFrame = probeFrame;
         this.applicationCommands = applicationCommands;
-        this.setLayout(new FlowLayout(FlowLayout.CENTER));
         createPanel();
     }
 
@@ -47,9 +45,9 @@ public class MainInputPanel extends JPanel {
 
     private JButton createDownloadButton() {
         JButton downloadButton = new JButton("Download");
-        downloadButton.addActionListener((event) -> {
-            this.applicationCommands.download(this.redditNameField.getText(), "new");
-        });
+        downloadButton.addActionListener(event ->
+            this.applicationCommands.download(this.redditNameField.getText(), "new")
+        );
         return downloadButton;
     }
 
@@ -62,4 +60,5 @@ public class MainInputPanel extends JPanel {
         });
         return probeButton;
     }
+
 }

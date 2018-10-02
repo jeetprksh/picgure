@@ -60,12 +60,9 @@ public class ApplicationCommands {
 		return message;
 	}
 
-	public void analysis(String reddit, String title) {
+	public List<ImgurObjectAttrs> analysis(String title, String reddit) {
 		logger.info(reddit + " " + title);
-		List<ImgurObjectAttrs> attrs = objectService.searchObjectsByTitle(title, reddit);
-		for (ImgurObjectAttrs attr : attrs) {
-			logger.info(attr.toString());
-		}
+		return objectService.searchLocalRepoByTitleAndReddit(title, reddit);
 	}
 
 	public void settings(String setting, String value) {

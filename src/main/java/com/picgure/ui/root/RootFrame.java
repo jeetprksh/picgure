@@ -1,5 +1,6 @@
 package com.picgure.ui.root;
 
+import com.picgure.ui.analysis.LocalAnalysisFrame;
 import com.picgure.ui.settings.SettingsFrame;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,12 +16,15 @@ public class RootFrame extends JFrame {
     private static Logger logger = Logger.getLogger(RootFrame.class.getName());
 
     private SettingsFrame settingsFrame;
+    private LocalAnalysisFrame localAnalysisFrame;
     private MainInputPanel mainInputPanel;
 
     @Autowired
     public RootFrame(SettingsFrame settingsFrame,
+                     LocalAnalysisFrame localAnalysisFrame,
                      MainInputPanel mainInputPanel) {
         this.settingsFrame = settingsFrame;
+        this.localAnalysisFrame = localAnalysisFrame;
         this.mainInputPanel = mainInputPanel;
         createFrame();
         createMenuBar();
@@ -40,6 +44,8 @@ public class RootFrame extends JFrame {
         JMenu options = createOptionsMenu();
 
         options.add(createSettingsMenuItem());
+        options.add(createLocalAnalysisMenuItem());
+
         menubar.add(options);
         this.setJMenuBar(menubar);
     }
@@ -48,6 +54,16 @@ public class RootFrame extends JFrame {
         JMenu options = new JMenu("Options");
         options.setMnemonic(KeyEvent.VK_O);
         return options;
+    }
+
+    private JMenuItem createLocalAnalysisMenuItem() {
+        JMenuItem settingsMenuItem = new JMenuItem("Local Analysis");
+        settingsMenuItem.setMnemonic(KeyEvent.VK_L);
+        settingsMenuItem.addActionListener((ActionEvent event) -> {
+            logger.info("Opening Local Analysis");
+            this.localAnalysisFrame.setVisible(true);
+        });
+        return settingsMenuItem;
     }
 
     private JMenuItem createSettingsMenuItem() {

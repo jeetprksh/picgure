@@ -23,7 +23,6 @@ public class ProbeInfoPanel extends JPanel {
         this.textArea = new JTextArea("Loading...", 6, 30);
         textArea.setEditable(false);
         this.add(textArea);
-        System.out.println("Added UI");
     }
 
     void loadProbeData(String redditName) {
