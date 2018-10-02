@@ -22,10 +22,10 @@ public class SettingServiceImpl implements SettingsService {
     private static Logger logger = Logger.getLogger(SettingServiceImpl.class.getName());
 
     @Autowired
-    PicgureSettingRepository repository;
+    private PicgureSettingRepository repository;
 
     @Autowired
-    FileService fileService;
+    private FileService fileService;
 
     @Override
     public void saveDefaultSettings() {

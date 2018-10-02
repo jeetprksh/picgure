@@ -17,11 +17,11 @@ import com.picgure.api.util.Constants;
 
 @Component
 public class FileServiceImpl implements FileService {
-	
-	Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
+
+	private Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
 
 	@Autowired
-	PicgureSettingRepository settingsRepo;
+	private PicgureSettingRepository settingsRepo;
 	
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.

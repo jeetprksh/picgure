@@ -17,10 +17,10 @@ public class PicgureAppEventListener {
     private static Logger logger = Logger.getLogger(PicgureAppEventListener.class.getName());
 
     @Autowired
-    SettingsService settingsService;
+    private SettingsService settingsService;
 
     @Autowired
-    FileService fileService;
+    private FileService fileService;
 
     @EventListener(ContextRefreshedEvent.class)
     public void contextStartedEvent() {
