@@ -1,6 +1,5 @@
 package com.picgure.api.manager.impl;
 
-import com.google.common.collect.Lists;
 import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -33,8 +34,9 @@ public class SettingServiceImpl implements SettingsService {
 
     @Override
     public void saveDefaultSettings() {
-        List<PicgureSettingDTO> storedSettings = Lists.newArrayList(repository.findAll());
-        List<PicgureSettingDTO> newDefaultSettings = Lists.newArrayList();
+        List<PicgureSettingDTO> storedSettings = StreamSupport.stream(repository.findAll().spliterator(), false)
+                                                                .collect(Collectors.toList());
+        List<PicgureSettingDTO> newDefaultSettings = Collections.emptyList();
 
         for (PicgureSettingDTO defaultSettingDTO : getDefaultSettings()) {
             boolean have = false;
@@ -93,8 +95,8 @@ public class SettingServiceImpl implements SettingsService {
     }
 
     private List<PicgureSettingDTO> getDefaultSettings() {
-        return Lists.newArrayList(new PicgureSettingDTO(Setting.ImageStore.toString(),
-                                        fileService.defaultImageStoreDirectory().getAbsolutePath()));
+        return Arrays.asList(new PicgureSettingDTO(Setting.ImageStore.toString(),
+                                fileService.defaultImageStoreDirectory().getAbsolutePath()));
     }
 
 }
