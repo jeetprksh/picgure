@@ -58,13 +58,13 @@ public class ObjectServiceImpl implements ObjectService {
 		
 		String url;
 		ImgurSubredditObjectsResponse response;
-		List<ImgurObjectAttrs> allImgurObjectAttrs = Collections.emptyList();
+		List<ImgurObjectAttrs> allImgurObjectAttrs = new ArrayList<>();
 		
 		int beforeListSize = 0;
 		int afterListSize = 0;
+		int count = 0;
 		
 		do {
-			int count = 0;
 			url = UrlUtil.constructImgurSubredditInfoUrl(imgurSearchQuery, count);
 			this.logger.info("REQUESTING INFO FOR :: " + url);
 			count++;
@@ -157,7 +157,7 @@ public class ObjectServiceImpl implements ObjectService {
 	@Override
 	public List<ImgurObjectAttrs> searchLocalRepoByTitleAndReddit(String title, String reddit) {
 		List<ImgurObjectDTO> dtos = repository.search(title, reddit);
-		List<ImgurObjectAttrs> attrs = Collections.emptyList();
+		List<ImgurObjectAttrs> attrs = new ArrayList<>();
 		for (ImgurObjectDTO dto : dtos) {
 			attrs.add(TranslateObjects.getImgurObject(dto));
 		}
