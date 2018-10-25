@@ -2,7 +2,6 @@ package com.picgure.api.manager.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.HttpClientService;
 import com.picgure.api.manager.ObjectService;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -58,13 +58,13 @@ public class ObjectServiceImpl implements ObjectService {
 		
 		String url;
 		ImgurSubredditObjectsResponse response;
-		List<ImgurObjectAttrs> allImgurObjectAttrs = Lists.newArrayList();
+		List<ImgurObjectAttrs> allImgurObjectAttrs = new ArrayList<>();
 		
 		int beforeListSize = 0;
 		int afterListSize = 0;
+		int count = 0;
 		
 		do {
-			int count = 0;
 			url = UrlUtil.constructImgurSubredditInfoUrl(imgurSearchQuery, count);
 			this.logger.info("REQUESTING INFO FOR :: " + url);
 			count++;
@@ -157,7 +157,7 @@ public class ObjectServiceImpl implements ObjectService {
 	@Override
 	public List<ImgurObjectAttrs> searchLocalRepoByTitleAndReddit(String title, String reddit) {
 		List<ImgurObjectDTO> dtos = repository.search(title, reddit);
-		List<ImgurObjectAttrs> attrs = Lists.newArrayList();
+		List<ImgurObjectAttrs> attrs = new ArrayList<>();
 		for (ImgurObjectDTO dto : dtos) {
 			attrs.add(TranslateObjects.getImgurObject(dto));
 		}
@@ -189,7 +189,7 @@ public class ObjectServiceImpl implements ObjectService {
 		
 		// Copy the object in the targetList to a temporary list as adding/removing 
 		// into the list that we are also traversing results in ConcurrentModificationException.
-		List<ImgurObjectAttrs> tempList = Lists.newArrayList();
+		List<ImgurObjectAttrs> tempList = new ArrayList<>();
 		for (ImgurObjectAttrs objectAttrs : targetList) {
 			tempList.add(objectAttrs);
 		}
@@ -213,7 +213,7 @@ public class ObjectServiceImpl implements ObjectService {
 	private List<List<ImgurObjectAttrs>> chopImgurObjList(
 			List<ImgurObjectAttrs> allImgurObjectAttrs, int chunkSize) {
 		
-		List<List<ImgurObjectAttrs>> choppedList = Lists.newArrayList();
+		List<List<ImgurObjectAttrs>> choppedList = new ArrayList<>();
 		
 		for (int start = 0; start < allImgurObjectAttrs.size(); start += chunkSize) {
 	        int end = Math.min(start + chunkSize, allImgurObjectAttrs.size());

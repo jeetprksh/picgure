@@ -3,10 +3,8 @@ package com.picgure.api.manager;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.http.client.ClientProtocolException;
-
 public interface HttpClientService {
 	
-	public InputStream getInputStreamForResource(String url) throws ClientProtocolException, IOException;
+	public InputStream getInputStreamForResource(String url) throws IOException;
 
 }

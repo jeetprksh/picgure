@@ -1,7 +1,5 @@
 package com.picgure.api.manager;
 
-import com.picgure.persistence.dto.PicgureSettingDTO;
-
 import java.util.Map;
 
 public interface SettingsService {
@@ -12,7 +10,7 @@ public interface SettingsService {
 
     public void printSettings();
 
-    public void saveSetting(Map<String, String> setting);
+    public void saveSetting(Map<String, String> settings);
 
     public void updateSetting(String name, String value);
 

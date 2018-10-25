@@ -1,13 +1,12 @@
 package com.picgure.entity;
 
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.google.common.collect.Lists;
+
+import javax.annotation.Generated;
+import java.util.Collections;
+import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
@@ -33,7 +32,7 @@ public class ImgurSubredditObjectsResponse {
     @JsonProperty("data")
     public List<ImgurObjectAttrs> getData() {
     	if (data == null){
-    		data = Lists.newArrayList();
+    		data = Collections.emptyList();
     	}
         return data;
     }

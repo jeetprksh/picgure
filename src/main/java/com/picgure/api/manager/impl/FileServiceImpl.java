@@ -1,10 +1,7 @@
 package com.picgure.api.manager.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.logging.Logger;
-
+import com.picgure.api.manager.FileService;
+import com.picgure.api.util.Constants;
 import com.picgure.api.util.Setting;
 import com.picgure.persistence.dao.PicgureSettingRepository;
 import org.apache.commons.io.FilenameUtils;
@@ -12,8 +9,10 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.picgure.api.manager.FileService;
-import com.picgure.api.util.Constants;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.logging.Logger;
 
 @Component
 public class FileServiceImpl implements FileService {
@@ -21,7 +20,11 @@ public class FileServiceImpl implements FileService {
 	private Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
 
 	@Autowired
-	private PicgureSettingRepository settingsRepo;
+	private final PicgureSettingRepository settingsRepo;
+
+	public FileServiceImpl(PicgureSettingRepository settingsRepo) {
+		this.settingsRepo = settingsRepo;
+	}
 	
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.

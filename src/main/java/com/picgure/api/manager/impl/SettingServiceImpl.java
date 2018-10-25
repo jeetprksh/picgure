@@ -1,6 +1,5 @@
 package com.picgure.api.manager.impl;
 
-import com.google.common.collect.Lists;
 import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -21,28 +22,31 @@ public class SettingServiceImpl implements SettingsService {
 
     private static Logger logger = Logger.getLogger(SettingServiceImpl.class.getName());
 
-    @Autowired
-    private PicgureSettingRepository repository;
+    private final PicgureSettingRepository repository;
+    private final FileService fileService;
 
     @Autowired
-    private FileService fileService;
+    public SettingServiceImpl(PicgureSettingRepository repository,
+                       FileService fileService) {
+        this.repository = repository;
+        this.fileService = fileService;
+    }
 
     @Override
     public void saveDefaultSettings() {
-        List<PicgureSettingDTO> storedSetting = Lists.newArrayList(repository.findAll());
-        List<PicgureSettingDTO> newDefaultSettings = Lists.newArrayList();
+        List<PicgureSettingDTO> storedSettings = StreamSupport.stream(repository.findAll().spliterator(), false)
+                                                                .collect(Collectors.toList());
+        List<PicgureSettingDTO> newDefaultSettings = Collections.emptyList();
 
         for (PicgureSettingDTO defaultSettingDTO : getDefaultSettings()) {
             boolean have = false;
-            for (PicgureSettingDTO storedSettingDTO : storedSetting) {
+            for (PicgureSettingDTO storedSettingDTO : storedSettings)
                 if (storedSettingDTO.getName().equals(defaultSettingDTO.getName())) {
                     have = true;
+                    break;
                 }
-            }
 
-            if (!have) {
-                newDefaultSettings.add(defaultSettingDTO);
-            }
+            if (!have) newDefaultSettings.add(defaultSettingDTO);
         }
 
         if (!newDefaultSettings.isEmpty()) {
@@ -87,14 +91,12 @@ public class SettingServiceImpl implements SettingsService {
             dto.setValue(value);
             repository.save(dto);
             logger.info("Updated the setting " + dto.toString());
-        } else {
-            System.out.println("Invalid setting name");
-        }
+        } else System.out.println("Invalid setting name");
     }
 
     private List<PicgureSettingDTO> getDefaultSettings() {
-        return Lists.newArrayList(new PicgureSettingDTO(Setting.ImageStore.toString(),
-                                        fileService.defaultImageStoreDirectory().getAbsolutePath()));
+        return Arrays.asList(new PicgureSettingDTO(Setting.ImageStore.toString(),
+                                fileService.defaultImageStoreDirectory().getAbsolutePath()));
     }
 
 }

@@ -1,8 +1,7 @@
 package com.picgure.persistence.dto;
 
-import com.google.common.base.Objects;
-
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name="picguresetting")
@@ -50,15 +49,15 @@ public class PicgureSettingDTO {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof PicgureSettingDTO)) return false;
         PicgureSettingDTO that = (PicgureSettingDTO) o;
-        return Objects.equal(name, that.name) &&
-                Objects.equal(value, that.value);
+        return Objects.equals(name, that.name) &&
+                Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name, value);
+        return Objects.hash(name, value);
     }
 
     @Override
