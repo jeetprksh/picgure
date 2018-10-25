@@ -11,21 +11,21 @@ public class LocalAnalysisFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisFrame.class.getName());
 
-    private LocalInfoPanel localInfoPanel;
+    private LocalAnalysisPanel localAnalysisPanel;
 
     @Autowired
-    LocalAnalysisFrame(LocalInfoPanel localInfoPanel) {
-        this.localInfoPanel = localInfoPanel;
+    LocalAnalysisFrame(LocalAnalysisPanel localAnalysisPanel) {
+        this.localAnalysisPanel = localAnalysisPanel;
         createFrame();
     }
 
     private void createFrame() {
-        this.setTitle("Reddit Probe");
+        this.setTitle("Local Analysis");
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.setSize(400, 300);
+        this.setSize(550, 300);
         this.setResizable(false);
-        this.add(this.localInfoPanel);
+        this.add(this.localAnalysisPanel);
     }
 
 }

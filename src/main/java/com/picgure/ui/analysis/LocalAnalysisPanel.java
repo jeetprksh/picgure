@@ -5,21 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.util.logging.Logger;
 
 @Component
-class LocalInfoPanel extends JPanel {
+class LocalAnalysisPanel extends JPanel {
 
-    private static Logger logger = Logger.getLogger(LocalInfoPanel.class.getName());
+    private static Logger logger = Logger.getLogger(LocalAnalysisPanel.class.getName());
 
     private JTextField redditNameField;
     private JTextField titleField;
-    private JTextArea resultTextArea;
+    DefaultTableModel tableModel;
 
     private ApplicationCommands appCommands;
 
     @Autowired
-    LocalInfoPanel(ApplicationCommands appCommands) {
+    LocalAnalysisPanel(ApplicationCommands appCommands) {
         this.appCommands = appCommands;
         createUI();
     }
@@ -28,7 +29,7 @@ class LocalInfoPanel extends JPanel {
         addTitleField();
         addRedditNameField();
         addLoadDataButton();
-        addResultTextArea();
+        addLocalAnalysisTable();
     }
 
     private void addRedditNameField() {
@@ -50,17 +51,29 @@ class LocalInfoPanel extends JPanel {
         this.add(loadDataButton);
     }
 
-    private void addResultTextArea() {
-        this.resultTextArea = new JTextArea(6, 20);
-        resultTextArea.setEditable(false);
-        this.add(resultTextArea);
+    private void addLocalAnalysisTable() {
+        JTable localInfoTable = new JTable();
+        JScrollPane scrollPane = new JScrollPane(localInfoTable);
+
+        this.tableModel = new DefaultTableModel(0, 0);
+        String header[] = new String[] {
+                "Title", "Sub Reddit", "GIF", "Author", "Size", "Created On", "Downloaded On" };
+        this.tableModel.setColumnIdentifiers(header);
+        localInfoTable.setModel(this.tableModel);
+
+        this.add(scrollPane);
     }
 
     private void loadAnalysisData(String title, String reddit) {
         this.appCommands.analysis(title, reddit).forEach(imgurObject -> {
             logger.info(imgurObject.toString());
-            this.resultTextArea.append(imgurObject.toString());
-            this.resultTextArea.append("\\n");
+            this.tableModel.addRow(
+                    new Object[] { imgurObject.getTitle(),
+                                   imgurObject.getSubreddit(),
+                                   imgurObject.getAnimated(),
+                                   imgurObject.getAuthor(),
+                                   imgurObject.getSize(),
+                                   imgurObject.getCreateDatetime()}); // TODO both dates are not working
         });
     }
 }
