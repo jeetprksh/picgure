@@ -2,14 +2,9 @@ package com.picgure.persistence.dto;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 
 /**
@@ -44,7 +39,7 @@ public class ImgurObjectDTO implements Serializable {
 
 	private String objecthash;
 
-	private Integer objectid;
+	private Long objectid;
 
 	private String reddit;
 
@@ -143,11 +138,11 @@ public class ImgurObjectDTO implements Serializable {
 		this.objecthash = objecthash;
 	}
 
-	public Integer getObjectid() {
+	public Long getObjectid() {
 		return this.objectid;
 	}
 
-	public void setObjectid(Integer objectid) {
+	public void setObjectid(Long objectid) {
 		this.objectid = objectid;
 	}
 

@@ -5,6 +5,8 @@ import com.picgure.persistence.dto.ImgurObjectDTO;
 
 public class TranslateObjects {
 
+    public static final int IMGUR_OBJECT_MAX_TITLE_LENTH = 250;
+
     public static ImgurObjectDTO getImgurObjectDTO(ImgurObjectAttrs attrs) {
         ImgurObjectDTO dto = new ImgurObjectDTO();
 
@@ -16,12 +18,12 @@ public class TranslateObjects {
         dto.setIsanimated(attrs.getAnimated());
         dto.setMimetype(attrs.getMimetype());
         dto.setObjecthash(attrs.getHash());
-        dto.setObjectid(attrs.getId().intValue());
+        dto.setObjectid(attrs.getId());
         dto.setSection(attrs.getSection());
         dto.setReddit(attrs.getReddit());
         dto.setSize(attrs.getSize());
         dto.setSubreddit(attrs.getSubreddit());
-        dto.setTitle(attrs.getTitle());
+        dto.setTitle(getTruncatedTitle(attrs.getTitle()));
         dto.setWidth(attrs.getWidth());
 
         return dto;
@@ -44,7 +46,7 @@ public class TranslateObjects {
         attr.setFavorited(null);
         attr.setHash(dto.getObjecthash());
         attr.setHeight(dto.getHeight());
-        attr.setId(dto.getObjectid().longValue());
+        attr.setId(dto.getObjectid());
         attr.setIsAlbum(null);
         attr.setLooping(null);
         attr.setMimetype(dto.getMimetype());
@@ -64,5 +66,9 @@ public class TranslateObjects {
         attr.setWidth(dto.getWidth());
 
         return attr;
+    }
+
+    private static String getTruncatedTitle(String title) {
+        return title.substring(0, Math.min(title.length(), IMGUR_OBJECT_MAX_TITLE_LENTH));
     }
 }
