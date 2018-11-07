@@ -3,6 +3,10 @@ package com.picgure.api.util;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class TranslateObjects {
 
     public static final int IMGUR_OBJECT_MAX_TITLE_LENTH = 250;
@@ -10,7 +14,7 @@ public class TranslateObjects {
     public static ImgurObjectDTO getImgurObjectDTO(ImgurObjectAttrs attrs) {
         ImgurObjectDTO dto = new ImgurObjectDTO();
 
-        // dto.setDatecreated(attrs.getCreateDatetime());		// TODO get it working
+        dto.setDatecreated(getTimestamp(attrs.getCreateDatetime()));
         dto.setAuthor(attrs.getAuthor());
         dto.setDescription(attrs.getDescription());
         dto.setExtension(attrs.getExt());
@@ -40,7 +44,7 @@ public class TranslateObjects {
         attr.setAlbumCoverWidth(null);
         attr.setAnimated(dto.getIsanimated());
         attr.setBandwidth(null);
-        attr.setCreateDatetime(null);
+        attr.setCreateDatetime(dto.getDatecreated().toLocalDateTime().toString());
         attr.setDescription(dto.getDescription());
         attr.setExt(dto.getExtension());
         attr.setFavorited(null);
@@ -70,5 +74,12 @@ public class TranslateObjects {
 
     private static String getTruncatedTitle(String title) {
         return title.substring(0, Math.min(title.length(), IMGUR_OBJECT_MAX_TITLE_LENTH));
+    }
+
+    private static Timestamp getTimestamp(String date) {
+        // "2013-05-20 21:08:52" -> "yyyy-MM-dd HH:mm:ss"
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(date, df);
+        return Timestamp.valueOf(dateTime);
     }
 }

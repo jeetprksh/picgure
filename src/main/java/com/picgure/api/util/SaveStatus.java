@@ -8,7 +8,7 @@ public enum SaveStatus {
 	
 	private final int id;
 	
-	private SaveStatus(int id) {
+	SaveStatus(int id) {
 		this.id = id;
 	}
 

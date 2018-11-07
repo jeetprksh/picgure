@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.logging.Logger;
 
 @Component
@@ -88,7 +89,7 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public void createImageStoreDirectory(File imageStore) {
-		if (!imageStore.exists()){
+		if (!imageStore.exists()) {
 		    logger.info("Creating the image store at " + imageStore.getAbsolutePath());
 		    imageStore.mkdir();
         }
