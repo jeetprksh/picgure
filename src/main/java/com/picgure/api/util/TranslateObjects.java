@@ -3,12 +3,18 @@ package com.picgure.api.util;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class TranslateObjects {
+
+    public static final int IMGUR_OBJECT_MAX_TITLE_LENTH = 250;
 
     public static ImgurObjectDTO getImgurObjectDTO(ImgurObjectAttrs attrs) {
         ImgurObjectDTO dto = new ImgurObjectDTO();
 
-        // dto.setDatecreated(attrs.getCreateDatetime());		// TODO get it working
+        dto.setDatecreated(getTimestamp(attrs.getCreateDatetime()));
         dto.setAuthor(attrs.getAuthor());
         dto.setDescription(attrs.getDescription());
         dto.setExtension(attrs.getExt());
@@ -16,12 +22,12 @@ public class TranslateObjects {
         dto.setIsanimated(attrs.getAnimated());
         dto.setMimetype(attrs.getMimetype());
         dto.setObjecthash(attrs.getHash());
-        dto.setObjectid(attrs.getId().intValue());
+        dto.setObjectid(attrs.getId());
         dto.setSection(attrs.getSection());
         dto.setReddit(attrs.getReddit());
         dto.setSize(attrs.getSize());
         dto.setSubreddit(attrs.getSubreddit());
-        dto.setTitle(attrs.getTitle());
+        dto.setTitle(getTruncatedTitle(attrs.getTitle()));
         dto.setWidth(attrs.getWidth());
 
         return dto;
@@ -38,13 +44,13 @@ public class TranslateObjects {
         attr.setAlbumCoverWidth(null);
         attr.setAnimated(dto.getIsanimated());
         attr.setBandwidth(null);
-        attr.setCreateDatetime(null);
+        attr.setCreateDatetime(dto.getDatecreated().toLocalDateTime().toString());
         attr.setDescription(dto.getDescription());
         attr.setExt(dto.getExtension());
         attr.setFavorited(null);
         attr.setHash(dto.getObjecthash());
         attr.setHeight(dto.getHeight());
-        attr.setId(dto.getObjectid().longValue());
+        attr.setId(dto.getObjectid());
         attr.setIsAlbum(null);
         attr.setLooping(null);
         attr.setMimetype(dto.getMimetype());
@@ -64,5 +70,16 @@ public class TranslateObjects {
         attr.setWidth(dto.getWidth());
 
         return attr;
+    }
+
+    private static String getTruncatedTitle(String title) {
+        return title.substring(0, Math.min(title.length(), IMGUR_OBJECT_MAX_TITLE_LENTH));
+    }
+
+    private static Timestamp getTimestamp(String date) {
+        // "2013-05-20 21:08:52" -> "yyyy-MM-dd HH:mm:ss"
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime dateTime = LocalDateTime.parse(date, df);
+        return Timestamp.valueOf(dateTime);
     }
 }
