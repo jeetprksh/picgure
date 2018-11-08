@@ -3,8 +3,8 @@ package com.picgure.api.manager.impl;
 import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
-import com.picgure.persistence.dao.PicgureSettingRepository;
-import com.picgure.persistence.dao.impl.PicgureSettingRepoImpl;
+import com.picgure.persistence.dao.SettingsDao;
+import com.picgure.persistence.dao.impl.SettingsDaoImpl;
 import com.picgure.persistence.dto.PicgureSettingDTO;
 
 import java.io.File;
@@ -16,15 +16,19 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class SettingServiceImpl implements SettingsService {
+/*
+ * @author Jeet Prakash
+ * */
 
-    private static Logger logger = Logger.getLogger(SettingServiceImpl.class.getName());
+public class SettingsServiceImpl implements SettingsService {
 
-    private final PicgureSettingRepository repository;
+    private static Logger logger = Logger.getLogger(SettingsServiceImpl.class.getName());
+
+    private final SettingsDao repository;
     private final FileService fileService;
 
-    public SettingServiceImpl() {
-        this.repository = new PicgureSettingRepoImpl();
+    public SettingsServiceImpl() {
+        this.repository = new SettingsDaoImpl();
         this.fileService = new FileServiceImpl();
     }
 

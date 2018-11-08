@@ -1,11 +1,15 @@
 package com.picgure.persistence.dao.impl;
 
-import com.picgure.persistence.dao.PicgureSettingRepository;
+import com.picgure.persistence.dao.SettingsDao;
 import com.picgure.persistence.dto.PicgureSettingDTO;
 
 import java.util.List;
 
-public class PicgureSettingRepoImpl implements PicgureSettingRepository {
+/*
+ * @author Jeet Prakash
+ * */
+
+public class SettingsDaoImpl extends CommonDao implements SettingsDao {
 
     @Override
     public Integer save(PicgureSettingDTO dto) {
@@ -19,6 +23,6 @@ public class PicgureSettingRepoImpl implements PicgureSettingRepository {
 
     @Override
     public List<PicgureSettingDTO> findAll() {
-        return null;
+        return listAll(PicgureSettingDTO.class);
     }
 }

@@ -7,6 +7,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class TranslateObjects {
 
     public static final int IMGUR_OBJECT_MAX_TITLE_LENTH = 250;

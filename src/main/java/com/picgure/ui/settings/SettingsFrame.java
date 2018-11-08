@@ -2,6 +2,10 @@ package com.picgure.ui.settings;
 
 import javax.swing.*;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class SettingsFrame extends JFrame {
 
     private SettingsInputPanel settingsInputPanel;

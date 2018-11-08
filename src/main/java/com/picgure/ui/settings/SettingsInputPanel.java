@@ -1,12 +1,16 @@
 package com.picgure.ui.settings;
 
 import com.picgure.api.manager.SettingsService;
-import com.picgure.api.manager.impl.SettingServiceImpl;
+import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Setting;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.util.logging.Logger;
+
+/*
+ * @author Jeet Prakash
+ * */
 
 class SettingsInputPanel extends JPanel {
 
@@ -17,7 +21,7 @@ class SettingsInputPanel extends JPanel {
     private SettingsService settingsService;
 
     SettingsInputPanel() {
-        this.settingsService = new SettingServiceImpl();
+        this.settingsService = new SettingsServiceImpl();
         createUI();
     }
 

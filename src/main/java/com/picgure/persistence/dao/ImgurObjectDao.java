@@ -4,7 +4,11 @@ import com.picgure.persistence.dto.ImgurObjectDTO;
 
 import java.util.List;
 
-public interface ImgurObjectRepository {
+/*
+ * @author Jeet Prakash
+ * */
+
+public interface ImgurObjectDao {
 
 	public Integer save(ImgurObjectDTO dto);
 	

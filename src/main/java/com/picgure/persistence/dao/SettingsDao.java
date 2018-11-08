@@ -4,7 +4,11 @@ import com.picgure.persistence.dto.PicgureSettingDTO;
 
 import java.util.List;
 
-public interface PicgureSettingRepository {
+/*
+ * @author Jeet Prakash
+ * */
+
+public interface SettingsDao {
 
     public Integer save(PicgureSettingDTO dto);
 

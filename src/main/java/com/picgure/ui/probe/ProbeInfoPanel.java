@@ -4,6 +4,10 @@ import com.picgure.command.ApplicationCommands;
 
 import javax.swing.*;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 class ProbeInfoPanel extends JPanel {
 
     private JTextArea textArea;

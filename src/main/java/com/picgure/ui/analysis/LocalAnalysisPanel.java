@@ -6,6 +6,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 class LocalAnalysisPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisPanel.class.getName());

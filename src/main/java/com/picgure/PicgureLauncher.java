@@ -5,6 +5,10 @@ import com.picgure.ui.root.RootFrame;
 import javax.swing.*;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class PicgureLauncher {
 
 	private static Logger logger = Logger.getLogger(PicgureLauncher.class.getName());

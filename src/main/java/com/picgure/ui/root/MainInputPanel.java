@@ -7,6 +7,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 class MainInputPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(MainInputPanel.class.getName());

@@ -3,6 +3,10 @@ package com.picgure.ui.analysis;
 import javax.swing.*;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class LocalAnalysisFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisFrame.class.getName());

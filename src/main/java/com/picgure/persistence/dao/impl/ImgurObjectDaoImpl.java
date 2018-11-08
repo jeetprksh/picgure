@@ -1,11 +1,15 @@
 package com.picgure.persistence.dao.impl;
 
-import com.picgure.persistence.dao.ImgurObjectRepository;
+import com.picgure.persistence.dao.ImgurObjectDao;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
 import java.util.List;
 
-public class ImgurObjectRepoImpl implements ImgurObjectRepository {
+/*
+ * @author Jeet Prakash
+ * */
+
+public class ImgurObjectDaoImpl extends CommonDao implements ImgurObjectDao {
 
     @Override
     public Integer save(ImgurObjectDTO dto) {

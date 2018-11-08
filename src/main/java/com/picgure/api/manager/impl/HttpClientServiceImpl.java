@@ -9,6 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class HttpClientServiceImpl implements HttpClientService {
 
 	private static Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());

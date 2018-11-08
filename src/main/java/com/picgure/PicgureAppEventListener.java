@@ -7,6 +7,10 @@ import com.picgure.api.util.Setting;
 import java.io.File;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class PicgureAppEventListener {
 
     private static Logger logger = Logger.getLogger(PicgureAppEventListener.class.getName());

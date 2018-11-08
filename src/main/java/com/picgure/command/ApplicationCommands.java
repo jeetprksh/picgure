@@ -3,13 +3,17 @@ package com.picgure.command;
 import com.picgure.api.manager.ObjectService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.manager.impl.ObjectServiceImpl;
-import com.picgure.api.manager.impl.SettingServiceImpl;
+import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Constants;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 
 import java.util.List;
 import java.util.logging.Logger;
+
+/*
+ * @author Jeet Prakash
+ * */
 
 public class ApplicationCommands {
 	
@@ -20,7 +24,7 @@ public class ApplicationCommands {
 
 	public ApplicationCommands() {
 		this.objectService = new ObjectServiceImpl();
-		this.settingsService = new SettingServiceImpl();
+		this.settingsService = new SettingsServiceImpl();
 	}
 
     public void download(String redditName, String order) {

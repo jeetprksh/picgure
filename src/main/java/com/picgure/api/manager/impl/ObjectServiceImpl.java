@@ -12,8 +12,8 @@ import com.picgure.api.util.UrlUtil;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.entity.ImgurSubredditObjectsResponse;
-import com.picgure.persistence.dao.ImgurObjectRepository;
-import com.picgure.persistence.dao.impl.ImgurObjectRepoImpl;
+import com.picgure.persistence.dao.ImgurObjectDao;
+import com.picgure.persistence.dao.impl.ImgurObjectDaoImpl;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
 import java.io.IOException;
@@ -26,18 +26,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class ObjectServiceImpl implements ObjectService {
 	
 	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
 
 	private HttpClientService httpClientService;
 	private FileService fileService;
-	private ImgurObjectRepository repository;
+	private ImgurObjectDao repository;
 
 	public ObjectServiceImpl() {
         this.httpClientService = new HttpClientServiceImpl();
         this.fileService = new FileServiceImpl();
-        this.repository = new ImgurObjectRepoImpl();
+        this.repository = new ImgurObjectDaoImpl();
 	}
 	
 	@Override

@@ -6,8 +6,8 @@ import com.picgure.api.manager.file.naming.impl.LinuxFile;
 import com.picgure.api.manager.file.naming.impl.WindowsFile;
 import com.picgure.api.util.Constants;
 import com.picgure.api.util.Setting;
-import com.picgure.persistence.dao.PicgureSettingRepository;
-import com.picgure.persistence.dao.impl.PicgureSettingRepoImpl;
+import com.picgure.persistence.dao.SettingsDao;
+import com.picgure.persistence.dao.impl.SettingsDaoImpl;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -15,17 +15,20 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class FileServiceImpl implements FileService {
 
 	private Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
 
-	private final PicgureSettingRepository settingsRepo;
-
+	private final SettingsDao settingsDao;
 	private final CreateFileStratedgy createFileStratedgy;
 
 	public FileServiceImpl() {
 		this.createFileStratedgy = getCreateFileStratedgy();
-		this.settingsRepo = new PicgureSettingRepoImpl();
+		this.settingsDao = new SettingsDaoImpl();
 	}
 	
 	/**
@@ -92,7 +95,7 @@ public class FileServiceImpl implements FileService {
 	}
 
 	private String getBaseDirectory() {
-		String baseDir = settingsRepo.findByName(Setting.ImageStore.toString()).getValue();
+		String baseDir = settingsDao.findByName(Setting.ImageStore.toString()).getValue();
 		return baseDir == null ? Constants.DEFAULT_DOWNLOAD_DIR : baseDir;
 	}
 
