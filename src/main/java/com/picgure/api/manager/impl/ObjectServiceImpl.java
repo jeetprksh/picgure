@@ -13,11 +13,8 @@ import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.entity.ImgurSubredditObjectsResponse;
 import com.picgure.persistence.dao.ImgurObjectRepository;
+import com.picgure.persistence.dao.impl.ImgurObjectRepoImpl;
 import com.picgure.persistence.dto.ImgurObjectDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-@Component
 public class ObjectServiceImpl implements ObjectService {
 	
 	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
@@ -38,17 +34,13 @@ public class ObjectServiceImpl implements ObjectService {
 	private FileService fileService;
 	private ImgurObjectRepository repository;
 
-	@Autowired
-	public ObjectServiceImpl(HttpClientService httpClientService,
-                             FileService fileService,
-                             ImgurObjectRepository repository) {
-        this.httpClientService = httpClientService;
-        this.fileService = fileService;
-        this.repository = repository;
+	public ObjectServiceImpl() {
+        this.httpClientService = new HttpClientServiceImpl();
+        this.fileService = new FileServiceImpl();
+        this.repository = new ImgurObjectRepoImpl();
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class)
 	public void downloadImgurObjectByHash(String hash) throws Exception {
 		// TODO
 	}
@@ -91,7 +83,6 @@ public class ObjectServiceImpl implements ObjectService {
 
 	// TODO: Function is quite bulky, try to decompose it.
 	@Override
-	@Transactional(rollbackFor=Exception.class, isolation=Isolation.READ_UNCOMMITTED, readOnly=false)
 	public void downloadAllImgurObjectsInSubreddit(List<ImgurObjectAttrs> allImgurObjectAttrs) {
 		
 		String imgurObjectUrl;
@@ -136,7 +127,6 @@ public class ObjectServiceImpl implements ObjectService {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, isolation=Isolation.READ_UNCOMMITTED, readOnly=false)
 	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) {
 		
 		List<List<ImgurObjectAttrs>> choppedList = chopImgurObjList(allImgurObjectAttrs, Constants.DEFAULT_LIST_CHOP_SIZE);

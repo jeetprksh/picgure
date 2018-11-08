@@ -4,9 +4,8 @@ import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
 import com.picgure.persistence.dao.PicgureSettingRepository;
+import com.picgure.persistence.dao.impl.PicgureSettingRepoImpl;
 import com.picgure.persistence.dto.PicgureSettingDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Arrays;
@@ -17,7 +16,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Component
 public class SettingServiceImpl implements SettingsService {
 
     private static Logger logger = Logger.getLogger(SettingServiceImpl.class.getName());
@@ -25,13 +23,17 @@ public class SettingServiceImpl implements SettingsService {
     private final PicgureSettingRepository repository;
     private final FileService fileService;
 
-    @Autowired
-    public SettingServiceImpl(PicgureSettingRepository repository,
-                       FileService fileService) {
-        this.repository = repository;
-        this.fileService = fileService;
+    public SettingServiceImpl() {
+        this.repository = new PicgureSettingRepoImpl();
+        this.fileService = new FileServiceImpl();
     }
 
+    /*
+    * Method to check whether there are new additional settings that needs to
+    * be added into the database. Method getDefaultSettings() is being used
+    * have all the setting which might contain new once those settings are then
+    * compared to the one stored on database.
+    * */
     @Override
     public void saveDefaultSettings() {
         List<PicgureSettingDTO> storedSettings = StreamSupport.stream(repository.findAll().spliterator(), false)

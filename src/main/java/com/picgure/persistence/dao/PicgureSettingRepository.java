@@ -1,13 +1,15 @@
 package com.picgure.persistence.dao;
 
-import com.picgure.persistence.dto.ImgurObjectDTO;
 import com.picgure.persistence.dto.PicgureSettingDTO;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
-public interface PicgureSettingRepository extends CrudRepository<PicgureSettingDTO, Long> {
+import java.util.List;
+
+public interface PicgureSettingRepository {
+
+    public Integer save(PicgureSettingDTO dto);
 
     public PicgureSettingDTO findByName(String name);
+
+    public List<PicgureSettingDTO> findAll();
 
 }

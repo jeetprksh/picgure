@@ -1,21 +1,16 @@
 package com.picgure.ui.analysis;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import javax.swing.*;
 import java.util.logging.Logger;
 
-@Component
 public class LocalAnalysisFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisFrame.class.getName());
 
     private LocalAnalysisPanel localAnalysisPanel;
 
-    @Autowired
-    LocalAnalysisFrame(LocalAnalysisPanel localAnalysisPanel) {
-        this.localAnalysisPanel = localAnalysisPanel;
+    public LocalAnalysisFrame() {
+        this.localAnalysisPanel = new LocalAnalysisPanel();
         createFrame();
     }
 

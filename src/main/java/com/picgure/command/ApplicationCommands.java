@@ -2,16 +2,15 @@ package com.picgure.command;
 
 import com.picgure.api.manager.ObjectService;
 import com.picgure.api.manager.SettingsService;
+import com.picgure.api.manager.impl.ObjectServiceImpl;
+import com.picgure.api.manager.impl.SettingServiceImpl;
 import com.picgure.api.util.Constants;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.logging.Logger;
 
-@Component
 public class ApplicationCommands {
 	
 	private static Logger logger = Logger.getLogger(ApplicationCommands.class.getName());
@@ -19,11 +18,9 @@ public class ApplicationCommands {
 	private ObjectService objectService;
 	private SettingsService settingsService;
 
-	@Autowired
-	public ApplicationCommands(ObjectService objectService,
-							   SettingsService settingsService) {
-		this.objectService = objectService;
-		this.settingsService = settingsService;
+	public ApplicationCommands() {
+		this.objectService = new ObjectServiceImpl();
+		this.settingsService = new SettingServiceImpl();
 	}
 
     public void download(String redditName, String order) {

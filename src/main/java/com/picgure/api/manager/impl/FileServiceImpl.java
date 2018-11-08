@@ -7,29 +7,25 @@ import com.picgure.api.manager.file.naming.impl.WindowsFile;
 import com.picgure.api.util.Constants;
 import com.picgure.api.util.Setting;
 import com.picgure.persistence.dao.PicgureSettingRepository;
+import com.picgure.persistence.dao.impl.PicgureSettingRepoImpl;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.logging.Logger;
 
-@Component
 public class FileServiceImpl implements FileService {
 
 	private Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
 
-	@Autowired
 	private final PicgureSettingRepository settingsRepo;
 
 	private final CreateFileStratedgy createFileStratedgy;
 
-	public FileServiceImpl(PicgureSettingRepository settingsRepo) {
+	public FileServiceImpl() {
 		this.createFileStratedgy = getCreateFileStratedgy();
-		this.settingsRepo = settingsRepo;
+		this.settingsRepo = new PicgureSettingRepoImpl();
 	}
 	
 	/**

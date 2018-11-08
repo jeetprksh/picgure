@@ -2,15 +2,12 @@ package com.picgure.ui.root;
 
 import com.picgure.command.ApplicationCommands;
 import com.picgure.ui.probe.ProbeFrame;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.logging.Logger;
 
-@Component
-public class MainInputPanel extends JPanel {
+class MainInputPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(MainInputPanel.class.getName());
 
@@ -19,11 +16,9 @@ public class MainInputPanel extends JPanel {
 
     private JTextField redditNameField;
 
-    @Autowired
-    public MainInputPanel(ProbeFrame probeFrame,
-                          ApplicationCommands applicationCommands) {
-        this.probeFrame = probeFrame;
-        this.applicationCommands = applicationCommands;
+    MainInputPanel() {
+        this.probeFrame = new ProbeFrame();
+        this.applicationCommands = new ApplicationCommands();
         createPanel();
     }
 

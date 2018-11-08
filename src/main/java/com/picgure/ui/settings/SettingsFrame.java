@@ -1,21 +1,13 @@
 package com.picgure.ui.settings;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import javax.swing.*;
-import java.util.logging.Logger;
 
-@Component
 public class SettingsFrame extends JFrame {
-
-    private static Logger logger = Logger.getLogger(SettingsFrame.class.getName());
 
     private SettingsInputPanel settingsInputPanel;
 
-    @Autowired
-    public SettingsFrame(SettingsInputPanel settingsInputPanel) {
-        this.settingsInputPanel = settingsInputPanel;
+    public SettingsFrame() {
+        this.settingsInputPanel = new SettingsInputPanel();
         createFrame();
     }
 
