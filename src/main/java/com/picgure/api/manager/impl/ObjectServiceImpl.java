@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class ObjectServiceImpl implements ObjectService {
 	
 	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
@@ -121,6 +120,7 @@ public class ObjectServiceImpl implements ObjectService {
 				
 				repository.save(imgurObjectDTO);
 			} catch (Exception e) {
+				e.printStackTrace();
 				// save DTO with failed status.
 				imgurObjectDTO.setSavedstatus(SaveStatus.FAILED.getId());
 				repository.save(imgurObjectDTO);
