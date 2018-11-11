@@ -13,7 +13,6 @@ import java.util.Map;
 /*
  * @author Jeet Prakash
  * */
-
 public class PersistenceConfig {
 
     private static final SessionFactory sessionFactory;
@@ -47,6 +46,7 @@ public class PersistenceConfig {
         settings.put(Environment.DIALECT, "org.hibernate.dialect.H2Dialect");
         settings.put(Environment.HBM2DDL_AUTO, "update");
         settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+        settings.put(Environment.AUTOCOMMIT, "true");
         return settings;
     }
 }

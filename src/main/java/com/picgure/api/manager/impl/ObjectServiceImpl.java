@@ -162,7 +162,7 @@ public class ObjectServiceImpl implements ObjectService {
 			List<ImgurObjectDTO> imgurObjectDTOList) {
 		boolean isDownloaded = false;
 		for (ImgurObjectDTO dto : imgurObjectDTOList) {
-			if (dto.getSavedstatus() == SaveStatus.SAVED.getId() && dto.getTitle().equals(imgurObjectAttrs.getTitle()) &&
+			if (dto.getSavedstatus() == SaveStatus.SAVED.getId() &&
 					dto.getSize().intValue() == imgurObjectAttrs.getSize().intValue()) {
 				isDownloaded = true;
 				break;
