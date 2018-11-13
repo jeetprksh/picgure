@@ -17,6 +17,7 @@ public class PicgureLauncher {
 
 	public static void main(String[] args) {
 		logger.info("Starting the Application.");
+		new PicgureAppEventListener().syncSettingsFileStore();
 		new PicgureLauncher().run();
 	}
 
