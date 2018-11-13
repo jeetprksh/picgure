@@ -1,27 +1,27 @@
 package com.picgure.ui.analysis;
 
 import com.picgure.command.ApplicationCommands;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.util.logging.Logger;
 
-@Component
+/*
+ * @author Jeet Prakash
+ * */
+
 class LocalAnalysisPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisPanel.class.getName());
 
     private JTextField redditNameField;
     private JTextField titleField;
-    DefaultTableModel tableModel;
+    private DefaultTableModel tableModel;
 
     private ApplicationCommands appCommands;
 
-    @Autowired
-    LocalAnalysisPanel(ApplicationCommands appCommands) {
-        this.appCommands = appCommands;
+    LocalAnalysisPanel() {
+        this.appCommands = new ApplicationCommands();
         createUI();
     }
 

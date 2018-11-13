@@ -2,15 +2,16 @@ package com.picgure.ui.root;
 
 import com.picgure.ui.analysis.LocalAnalysisFrame;
 import com.picgure.ui.settings.SettingsFrame;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
 
-@Component
+/*
+ * @author Jeet Prakash
+ * */
+
 public class RootFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(RootFrame.class.getName());
@@ -19,13 +20,10 @@ public class RootFrame extends JFrame {
     private LocalAnalysisFrame localAnalysisFrame;
     private MainInputPanel mainInputPanel;
 
-    @Autowired
-    public RootFrame(SettingsFrame settingsFrame,
-                     LocalAnalysisFrame localAnalysisFrame,
-                     MainInputPanel mainInputPanel) {
-        this.settingsFrame = settingsFrame;
-        this.localAnalysisFrame = localAnalysisFrame;
-        this.mainInputPanel = mainInputPanel;
+    public RootFrame() {
+        this.settingsFrame = new SettingsFrame();
+        this.localAnalysisFrame = new LocalAnalysisFrame();
+        this.mainInputPanel = new MainInputPanel();
         createFrame();
         createMenuBar();
     }

@@ -1,21 +1,20 @@
 package com.picgure.ui.probe;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import javax.swing.*;
 import java.util.logging.Logger;
 
-@Component
+/*
+ * @author Jeet Prakash
+ * */
+
 public class ProbeFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(ProbeFrame.class.getName());
 
     private ProbeInfoPanel probeInfoPanel;
 
-    @Autowired
-    public ProbeFrame(ProbeInfoPanel probeInfoPanel) {
-        this.probeInfoPanel = probeInfoPanel;
+    public ProbeFrame() {
+        this.probeInfoPanel = new ProbeInfoPanel();
         createFrame();
     }
 

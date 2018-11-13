@@ -13,6 +13,14 @@ import java.sql.Timestamp;
  */
 @Entity
 @Table(name="imgurobjectstab")
+@NamedQueries({
+		@NamedQuery(name = "imgurobjectstab.findByObjecthash",
+					query = "select i from ImgurObjectDTO i where i.objecthash = :objectHash"),
+		@NamedQuery(name = "imgurobjectstab.findBySubreddit",
+					query = "select i from ImgurObjectDTO i where i.subreddit = :subreddit"),
+		@NamedQuery(name = "imgurobjectstab.search",
+					query = "select i FROM ImgurObjectDTO i WHERE i.title like :title or i.subreddit like :subreddit")
+})
 public class ImgurObjectDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 

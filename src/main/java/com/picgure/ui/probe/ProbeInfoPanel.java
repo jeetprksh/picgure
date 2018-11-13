@@ -1,21 +1,21 @@
 package com.picgure.ui.probe;
 
 import com.picgure.command.ApplicationCommands;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 
-@Component
-public class ProbeInfoPanel extends JPanel {
+/*
+ * @author Jeet Prakash
+ * */
+
+class ProbeInfoPanel extends JPanel {
 
     private JTextArea textArea;
 
     private ApplicationCommands applicationCommands;
 
-    @Autowired
-    ProbeInfoPanel(ApplicationCommands applicationCommands) {
-        this.applicationCommands = applicationCommands;
+    ProbeInfoPanel() {
+        this.applicationCommands = new ApplicationCommands();
         createUI();
     }
 

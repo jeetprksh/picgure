@@ -12,12 +12,9 @@ import com.picgure.api.util.UrlUtil;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.entity.ImgurSubredditObjectsResponse;
-import com.picgure.persistence.dao.ImgurObjectRepository;
+import com.picgure.persistence.dao.ImgurObjectDao;
+import com.picgure.persistence.dao.impl.ImgurObjectDaoImpl;
 import com.picgure.persistence.dto.ImgurObjectDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,26 +26,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-@Component
+/*
+ * @author Jeet Prakash
+ * */
 public class ObjectServiceImpl implements ObjectService {
 	
 	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
 
 	private HttpClientService httpClientService;
 	private FileService fileService;
-	private ImgurObjectRepository repository;
+	private ImgurObjectDao repository;
 
-	@Autowired
-	public ObjectServiceImpl(HttpClientService httpClientService,
-                             FileService fileService,
-                             ImgurObjectRepository repository) {
-        this.httpClientService = httpClientService;
-        this.fileService = fileService;
-        this.repository = repository;
+	public ObjectServiceImpl() {
+        this.httpClientService = new HttpClientServiceImpl();
+        this.fileService = new FileServiceImpl();
+        this.repository = new ImgurObjectDaoImpl();
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class)
 	public void downloadImgurObjectByHash(String hash) throws Exception {
 		// TODO
 	}
@@ -91,7 +86,6 @@ public class ObjectServiceImpl implements ObjectService {
 
 	// TODO: Function is quite bulky, try to decompose it.
 	@Override
-	@Transactional(rollbackFor=Exception.class, isolation=Isolation.READ_UNCOMMITTED, readOnly=false)
 	public void downloadAllImgurObjectsInSubreddit(List<ImgurObjectAttrs> allImgurObjectAttrs) {
 		
 		String imgurObjectUrl;
@@ -126,6 +120,7 @@ public class ObjectServiceImpl implements ObjectService {
 				
 				repository.save(imgurObjectDTO);
 			} catch (Exception e) {
+				e.printStackTrace();
 				// save DTO with failed status.
 				imgurObjectDTO.setSavedstatus(SaveStatus.FAILED.getId());
 				repository.save(imgurObjectDTO);
@@ -136,7 +131,6 @@ public class ObjectServiceImpl implements ObjectService {
 	}
 	
 	@Override
-	@Transactional(rollbackFor=Exception.class, isolation=Isolation.READ_UNCOMMITTED, readOnly=false)
 	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) {
 		
 		List<List<ImgurObjectAttrs>> choppedList = chopImgurObjList(allImgurObjectAttrs, Constants.DEFAULT_LIST_CHOP_SIZE);
@@ -168,7 +162,7 @@ public class ObjectServiceImpl implements ObjectService {
 			List<ImgurObjectDTO> imgurObjectDTOList) {
 		boolean isDownloaded = false;
 		for (ImgurObjectDTO dto : imgurObjectDTOList) {
-			if (dto.getSavedstatus() == SaveStatus.SAVED.getId() && dto.getTitle().equals(imgurObjectAttrs.getTitle()) &&
+			if (dto.getSavedstatus() == SaveStatus.SAVED.getId() &&
 					dto.getSize().intValue() == imgurObjectAttrs.getSize().intValue()) {
 				isDownloaded = true;
 				break;

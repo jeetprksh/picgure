@@ -2,6 +2,10 @@ package com.picgure.api.util;
 
 import com.picgure.entity.ImgurSearchQuery;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class UrlUtil {
 
     public static String constructImgurSubredditInfoUrl(ImgurSearchQuery imgurSearchQuery, Integer index) {

@@ -2,6 +2,10 @@ package com.picgure.api.manager;
 
 import java.util.Map;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public interface SettingsService {
 
     public void saveDefaultSettings();

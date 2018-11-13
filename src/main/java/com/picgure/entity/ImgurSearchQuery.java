@@ -1,5 +1,9 @@
 package com.picgure.entity;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public class ImgurSearchQuery {
 	
 	private String redditName;

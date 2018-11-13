@@ -2,7 +2,6 @@ package com.picgure.api.manager.impl;
 
 import com.picgure.api.manager.HttpClientService;
 import com.picgure.api.util.Constants;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Logger;
 
-@Component
+/*
+ * @author Jeet Prakash
+ * */
+
 public class HttpClientServiceImpl implements HttpClientService {
 
 	private static Logger logger = Logger.getLogger(HttpClientServiceImpl.class.getName());

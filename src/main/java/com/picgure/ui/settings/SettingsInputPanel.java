@@ -1,16 +1,18 @@
 package com.picgure.ui.settings;
 
 import com.picgure.api.manager.SettingsService;
+import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Setting;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import java.util.logging.Logger;
 
-@Component
-public class SettingsInputPanel extends JPanel {
+/*
+ * @author Jeet Prakash
+ * */
+
+class SettingsInputPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(SettingsInputPanel.class.getName());
 
@@ -18,9 +20,8 @@ public class SettingsInputPanel extends JPanel {
 
     private SettingsService settingsService;
 
-    @Autowired
-    SettingsInputPanel(SettingsService settingsService) {
-        this.settingsService = settingsService;
+    SettingsInputPanel() {
+        this.settingsService = new SettingsServiceImpl();
         createUI();
     }
 

@@ -5,6 +5,10 @@ import com.picgure.entity.ImgurSearchQuery;
 
 import java.util.List;
 
+/*
+ * @author Jeet Prakash
+ * */
+
 public interface ObjectService {
 	
 	public void downloadAllImgurObjectsInSubreddit(List<ImgurObjectAttrs> allImgurObjectAttrs);

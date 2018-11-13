@@ -5,6 +5,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name="picguresetting")
+@NamedQueries({
+        @NamedQuery(name = "picguresetting.findByName",
+                    query = "select p from PicgureSettingDTO p where p.name = :name"),
+        @NamedQuery(name = "picguresetting.findAll",
+                    query = "select p from PicgureSettingDTO p")
+})
 public class PicgureSettingDTO {
 
     @Id

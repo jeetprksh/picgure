@@ -3,10 +3,9 @@ package com.picgure.api.manager.impl;
 import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
-import com.picgure.persistence.dao.PicgureSettingRepository;
+import com.picgure.persistence.dao.SettingsDao;
+import com.picgure.persistence.dao.impl.SettingsDaoImpl;
 import com.picgure.persistence.dto.PicgureSettingDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Arrays;
@@ -17,21 +16,28 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Component
-public class SettingServiceImpl implements SettingsService {
+/*
+ * @author Jeet Prakash
+ * */
 
-    private static Logger logger = Logger.getLogger(SettingServiceImpl.class.getName());
+public class SettingsServiceImpl implements SettingsService {
 
-    private final PicgureSettingRepository repository;
+    private static Logger logger = Logger.getLogger(SettingsServiceImpl.class.getName());
+
+    private final SettingsDao repository;
     private final FileService fileService;
 
-    @Autowired
-    public SettingServiceImpl(PicgureSettingRepository repository,
-                       FileService fileService) {
-        this.repository = repository;
-        this.fileService = fileService;
+    public SettingsServiceImpl() {
+        this.repository = new SettingsDaoImpl();
+        this.fileService = new FileServiceImpl();
     }
 
+    /*
+    * Method to check whether there are new additional settings that needs to
+    * be added into the database. Method getDefaultSettings() is being used
+    * have all the setting which might contain new once those settings are then
+    * compared to the one stored on database.
+    * */
     @Override
     public void saveDefaultSettings() {
         List<PicgureSettingDTO> storedSettings = StreamSupport.stream(repository.findAll().spliterator(), false)
