@@ -5,7 +5,6 @@ import javax.swing.*;
 /*
  * @author Jeet Prakash
  * */
-
 public class SettingsFrame extends JFrame {
 
     private SettingsInputPanel settingsInputPanel;
@@ -19,7 +18,7 @@ public class SettingsFrame extends JFrame {
         this.setTitle("Settings");
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.setSize(400, 300);
+        this.setSize(450, 300);
         this.setResizable(false);
         this.add(this.settingsInputPanel);
     }

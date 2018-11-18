@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class ProbeFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(ProbeFrame.class.getName());

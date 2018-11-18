@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class PicgureAppEventListener {
 
     private static Logger logger = Logger.getLogger(PicgureAppEventListener.class.getName());
@@ -25,10 +24,6 @@ public class PicgureAppEventListener {
         this.fileService = new FileServiceImpl();
     }
 
-    /*
-    * TODO
-    * Method to check and save new settings and create the ImageStore directory.
-    * */
     public void syncSettingsFileStore() {
         logger.info("Settings and File Store sync.");
         settingsService.saveDefaultSettings();

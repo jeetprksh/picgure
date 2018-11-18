@@ -3,6 +3,7 @@ package com.picgure.ui.settings;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Setting;
+import com.picgure.ui.factory.UiComponentFactory;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
@@ -11,17 +12,18 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 class SettingsInputPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(SettingsInputPanel.class.getName());
 
     private JTextField downloadFolderTextField;
+    private UiComponentFactory componentFactory;
 
     private SettingsService settingsService;
 
     SettingsInputPanel() {
         this.settingsService = new SettingsServiceImpl();
+        this.componentFactory = new UiComponentFactory();
         createUI();
     }
 
@@ -31,10 +33,10 @@ class SettingsInputPanel extends JPanel {
     }
 
     private void createDownloadDirSetting() {
-        JLabel label = new JLabel("Download Folder");
-        downloadFolderTextField = new JTextField(20);
+        JLabel label = componentFactory.getLabel("Download Folder");
+        downloadFolderTextField = componentFactory.getTextField("");
 
-        JButton button = new JButton("Choose");
+        JButton button = componentFactory.getButton("Choose");
         button.addActionListener((event) -> {
             JFileChooser fileChooser = new JFileChooser(FileSystemView.getFileSystemView());
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -49,7 +51,7 @@ class SettingsInputPanel extends JPanel {
     }
 
     private void createSaveButton() {
-        JButton saveButton = new JButton("Save");
+        JButton saveButton = componentFactory.getButton("Save");
         saveButton.addActionListener((event) -> {
             logger.info("Saving settings");
             settingsService.updateSetting(Setting.ImageStore.toString(), downloadFolderTextField.getText());

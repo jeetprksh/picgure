@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class ApplicationCommands {
 	
 	private static Logger logger = Logger.getLogger(ApplicationCommands.class.getName());
@@ -46,19 +45,9 @@ public class ApplicationCommands {
 		objectService.poolDownloadObjects(allImgurObjectAttrs);
     }
 
-    public String probe(String redditName) {
+    public List<ImgurObjectAttrs> probe(String redditName) {
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, Constants.SORT_ORDER_NEW);
-
-		List<ImgurObjectAttrs> allImgurObjectAttrs = objectService.getObjectsInSubreddit(imgurSearchQuery);
-
-		// Calculate overall size
-		long size = 0;
-		for (ImgurObjectAttrs imgurObject : allImgurObjectAttrs) {
-			size += imgurObject.getSize();
-		}
-		String message = "There are " + allImgurObjectAttrs.size() + " objects with overall size of " + size + " on " + redditName;
-		logger.info(message);
-		return message;
+		return objectService.getObjectsInSubreddit(imgurSearchQuery);
 	}
 
 	public List<ImgurObjectAttrs> analysis(String title, String reddit) {

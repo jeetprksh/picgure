@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class LocalAnalysisFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisFrame.class.getName());
@@ -22,7 +21,7 @@ public class LocalAnalysisFrame extends JFrame {
         this.setTitle("Local Analysis");
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        this.setSize(550, 300);
+        this.setSize(650, 500);
         this.setResizable(false);
         this.add(this.localAnalysisPanel);
     }
