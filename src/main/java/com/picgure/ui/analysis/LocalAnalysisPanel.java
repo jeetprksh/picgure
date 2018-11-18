@@ -1,6 +1,7 @@
 package com.picgure.ui.analysis;
 
 import com.picgure.command.ApplicationCommands;
+import com.picgure.ui.factory.UiComponentFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,7 +10,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 class LocalAnalysisPanel extends JPanel {
 
     private static Logger logger = Logger.getLogger(LocalAnalysisPanel.class.getName());
@@ -17,11 +17,13 @@ class LocalAnalysisPanel extends JPanel {
     private JTextField redditNameField;
     private JTextField titleField;
     private DefaultTableModel tableModel;
+    private UiComponentFactory componentFactory;
 
     private ApplicationCommands appCommands;
 
     LocalAnalysisPanel() {
         this.appCommands = new ApplicationCommands();
+        this.componentFactory = new UiComponentFactory();
         createUI();
     }
 
@@ -33,17 +35,17 @@ class LocalAnalysisPanel extends JPanel {
     }
 
     private void addRedditNameField() {
-        this.redditNameField = new JTextField("Reddit Name", 20);
+        this.redditNameField = componentFactory.getTextField("Reddit Name");
         this.add(redditNameField);
     }
 
     private void addTitleField() {
-        this.titleField = new JTextField("Title", 20);
+        this.titleField = componentFactory.getTextField("Title");
         this.add(titleField);
     }
 
     private void addLoadDataButton() {
-        JButton loadDataButton = new JButton("Analyse");
+        JButton loadDataButton = componentFactory.getButton("Analysis");
         loadDataButton.addActionListener(event ->
             this.loadAnalysisData(
                     this.titleField.getText(), this.redditNameField.getText())
@@ -73,7 +75,7 @@ class LocalAnalysisPanel extends JPanel {
                                    imgurObject.getAnimated(),
                                    imgurObject.getAuthor(),
                                    imgurObject.getSize(),
-                                   imgurObject.getCreateDatetime()}); // TODO both dates are not working
+                                   imgurObject.getCreateDatetime()});
         });
     }
 }

@@ -4,6 +4,7 @@ import com.picgure.ui.analysis.LocalAnalysisFrame;
 import com.picgure.ui.settings.SettingsFrame;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.logging.Logger;
@@ -11,7 +12,6 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class RootFrame extends JFrame {
 
     private static Logger logger = Logger.getLogger(RootFrame.class.getName());
@@ -51,12 +51,14 @@ public class RootFrame extends JFrame {
     private JMenu createOptionsMenu() {
         JMenu options = new JMenu("Options");
         options.setMnemonic(KeyEvent.VK_O);
+        options.setFont(new Font("Dialog", Font.PLAIN, 15));
         return options;
     }
 
     private JMenuItem createLocalAnalysisMenuItem() {
         JMenuItem settingsMenuItem = new JMenuItem("Local Analysis");
         settingsMenuItem.setMnemonic(KeyEvent.VK_L);
+        settingsMenuItem.setFont(new Font("Dialog", Font.PLAIN, 15));
         settingsMenuItem.addActionListener((ActionEvent event) -> {
             logger.info("Opening Local Analysis");
             this.localAnalysisFrame.setVisible(true);
@@ -67,6 +69,7 @@ public class RootFrame extends JFrame {
     private JMenuItem createSettingsMenuItem() {
         JMenuItem settingsMenuItem = new JMenuItem("Settings");
         settingsMenuItem.setMnemonic(KeyEvent.VK_S);
+        settingsMenuItem.setFont(new Font("Dialog", Font.PLAIN, 15));
         settingsMenuItem.addActionListener((ActionEvent event) -> {
             logger.info("Opening Settings");
             this.settingsFrame.setVisible(true);
