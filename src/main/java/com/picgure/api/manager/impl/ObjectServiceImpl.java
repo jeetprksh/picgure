@@ -12,6 +12,7 @@ import com.picgure.api.util.UrlUtil;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.entity.ImgurSubredditObjectsResponse;
+import com.picgure.logging.PicgureLogger;
 import com.picgure.persistence.dao.ImgurObjectDao;
 import com.picgure.persistence.dao.impl.ImgurObjectDaoImpl;
 import com.picgure.persistence.dto.ImgurObjectDTO;
@@ -31,7 +32,7 @@ import java.util.logging.Logger;
  * */
 public class ObjectServiceImpl implements ObjectService {
 	
-	private Logger logger = Logger.getLogger(ObjectServiceImpl.class.getName());
+	private Logger logger = PicgureLogger.getLogger(ObjectServiceImpl.class);
 
 	private HttpClientService httpClientService;
 	private FileService fileService;
@@ -49,7 +50,7 @@ public class ObjectServiceImpl implements ObjectService {
 	}
 	
 	@Override
-	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery) {
+	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery) throws Exception {
 		
 		String url;
 		ImgurSubredditObjectsResponse response;

@@ -3,6 +3,7 @@ package com.picgure.api.manager.impl;
 import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.util.Setting;
+import com.picgure.logging.PicgureLogger;
 import com.picgure.persistence.dao.SettingsDao;
 import com.picgure.persistence.dao.impl.SettingsDaoImpl;
 import com.picgure.persistence.dto.PicgureSettingDTO;
@@ -19,10 +20,9 @@ import java.util.stream.StreamSupport;
 /*
  * @author Jeet Prakash
  * */
-
 public class SettingsServiceImpl implements SettingsService {
 
-    private static Logger logger = Logger.getLogger(SettingsServiceImpl.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(SettingsServiceImpl.class);
 
     private final SettingsDao repository;
     private final FileService fileService;

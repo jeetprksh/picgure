@@ -1,5 +1,7 @@
 package com.picgure.ui.probe;
 
+import com.picgure.logging.PicgureLogger;
+
 import javax.swing.*;
 import java.util.logging.Logger;
 
@@ -8,7 +10,7 @@ import java.util.logging.Logger;
  * */
 public class ProbeFrame extends JFrame {
 
-    private static Logger logger = Logger.getLogger(ProbeFrame.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(ProbeFrame.class);
 
     private ProbeInfoPanel probeInfoPanel;
 
@@ -27,6 +29,11 @@ public class ProbeFrame extends JFrame {
     }
 
     public void loadProbeData(String redditName) {
-        this.probeInfoPanel.loadProbeData(redditName);
+        try {
+            this.probeInfoPanel.loadProbeData(redditName);
+        } catch (Exception ex) {
+            // TODO one more
+        }
+
     }
 }

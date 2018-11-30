@@ -1,6 +1,7 @@
 package com.picgure.ui.root;
 
 import com.picgure.command.ApplicationCommands;
+import com.picgure.logging.PicgureLogger;
 import com.picgure.ui.factory.UiComponentFactory;
 import com.picgure.ui.probe.ProbeFrame;
 
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
  * */
 class MainInputPanel extends JPanel {
 
-    private static Logger logger = Logger.getLogger(MainInputPanel.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(MainInputPanel.class);
 
     private ProbeFrame probeFrame;
     private ApplicationCommands applicationCommands;
@@ -46,8 +47,13 @@ class MainInputPanel extends JPanel {
 
     private JButton createDownloadButton() {
         JButton downloadButton = componentFactory.getButton("Download");
-        downloadButton.addActionListener(event ->
-            this.applicationCommands.download(this.redditNameField.getText(), "new")
+        downloadButton.addActionListener(event ->{
+            try {
+                this.applicationCommands.download(this.redditNameField.getText(), "new");
+            } catch (Exception ex) {
+                // TODO do something
+            }
+        }
         );
         return downloadButton;
     }

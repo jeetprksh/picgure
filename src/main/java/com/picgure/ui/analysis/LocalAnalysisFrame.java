@@ -1,5 +1,7 @@
 package com.picgure.ui.analysis;
 
+import com.picgure.logging.PicgureLogger;
+
 import javax.swing.*;
 import java.util.logging.Logger;
 
@@ -8,7 +10,7 @@ import java.util.logging.Logger;
  * */
 public class LocalAnalysisFrame extends JFrame {
 
-    private static Logger logger = Logger.getLogger(LocalAnalysisFrame.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(LocalAnalysisFrame.class);
 
     private LocalAnalysisPanel localAnalysisPanel;
 

@@ -7,6 +7,7 @@ import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Constants;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
+import com.picgure.logging.PicgureLogger;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
  * */
 public class ApplicationCommands {
 	
-	private static Logger logger = Logger.getLogger(ApplicationCommands.class.getName());
+	private static Logger logger = PicgureLogger.getLogger(ApplicationCommands.class);
 
 	private ObjectService objectService;
 	private SettingsService settingsService;
@@ -26,7 +27,7 @@ public class ApplicationCommands {
 		this.settingsService = new SettingsServiceImpl();
 	}
 
-    public void download(String redditName, String order) {
+    public void download(String redditName, String order) throws Exception {
 
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, order);
 		logger.info("OBJECT :: " + imgurSearchQuery);
@@ -45,7 +46,7 @@ public class ApplicationCommands {
 		objectService.poolDownloadObjects(allImgurObjectAttrs);
     }
 
-    public List<ImgurObjectAttrs> probe(String redditName) {
+    public List<ImgurObjectAttrs> probe(String redditName) throws Exception {
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, Constants.SORT_ORDER_NEW);
 		return objectService.getObjectsInSubreddit(imgurSearchQuery);
 	}

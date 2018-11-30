@@ -6,6 +6,7 @@ import com.picgure.api.manager.file.naming.impl.LinuxFile;
 import com.picgure.api.manager.file.naming.impl.WindowsFile;
 import com.picgure.api.util.Constants;
 import com.picgure.api.util.Setting;
+import com.picgure.logging.PicgureLogger;
 import com.picgure.persistence.dao.SettingsDao;
 import com.picgure.persistence.dao.impl.SettingsDaoImpl;
 import org.apache.commons.io.IOUtils;
@@ -18,10 +19,9 @@ import java.util.logging.Logger;
 /*
  * @author Jeet Prakash
  * */
-
 public class FileServiceImpl implements FileService {
 
-	private Logger logger = Logger.getLogger(FileServiceImpl.class.getName());
+	private Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
 
 	private final SettingsDao settingsDao;
 	private final CreateFileStratedgy createFileStratedgy;
