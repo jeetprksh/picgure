@@ -3,6 +3,7 @@ package com.picgure.ui.settings;
 import com.picgure.api.manager.SettingsService;
 import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Setting;
+import com.picgure.logging.PicgureLogger;
 import com.picgure.ui.factory.UiComponentFactory;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  * */
 class SettingsInputPanel extends JPanel {
 
-    private static Logger logger = Logger.getLogger(SettingsInputPanel.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(SettingsInputPanel.class);
 
     private JTextField downloadFolderTextField;
     private UiComponentFactory componentFactory;

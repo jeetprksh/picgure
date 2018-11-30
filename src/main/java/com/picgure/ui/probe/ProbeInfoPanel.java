@@ -30,7 +30,7 @@ class ProbeInfoPanel extends JPanel {
         this.add(scrollPane);
     }
 
-    void loadProbeData(String redditName) {
+    void loadProbeData(String redditName) throws Exception {
         List<ImgurObjectAttrs> imgurObjects = this.applicationCommands.probe(redditName);
 
         int size = imgurObjects.stream().mapToInt(obj -> obj.getSize()).sum();

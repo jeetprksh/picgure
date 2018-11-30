@@ -1,6 +1,7 @@
 package com.picgure.ui.analysis;
 
 import com.picgure.command.ApplicationCommands;
+import com.picgure.logging.PicgureLogger;
 import com.picgure.ui.factory.UiComponentFactory;
 
 import javax.swing.*;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
  * */
 class LocalAnalysisPanel extends JPanel {
 
-    private static Logger logger = Logger.getLogger(LocalAnalysisPanel.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(LocalAnalysisPanel.class);
 
     private JTextField redditNameField;
     private JTextField titleField;

@@ -5,6 +5,7 @@ import com.picgure.api.manager.SettingsService;
 import com.picgure.api.manager.impl.FileServiceImpl;
 import com.picgure.api.manager.impl.SettingsServiceImpl;
 import com.picgure.api.util.Setting;
+import com.picgure.logging.PicgureLogger;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  * */
 public class PicgureAppEventListener {
 
-    private static Logger logger = Logger.getLogger(PicgureAppEventListener.class.getName());
+    private static Logger logger = PicgureLogger.getLogger(PicgureAppEventListener.class);
 
     private SettingsService settingsService;
     private FileService fileService;
