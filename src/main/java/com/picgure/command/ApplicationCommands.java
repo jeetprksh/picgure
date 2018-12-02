@@ -55,13 +55,5 @@ public class ApplicationCommands {
 		logger.info(reddit + " " + title);
 		return objectService.searchLocalRepoByTitleAndReddit(title, reddit);
 	}
-
-	public void settings(String setting, String value) {
-		if (!setting.equals(Constants.BLANK_STRING)) {
-			settingsService.updateSetting(setting, value);
-		} else {
-			settingsService.printSettings();
-		}
-	}
 	
 }

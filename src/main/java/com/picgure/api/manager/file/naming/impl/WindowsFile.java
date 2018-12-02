@@ -1,6 +1,6 @@
 package com.picgure.api.manager.file.naming.impl;
 
-import com.picgure.api.manager.file.naming.CreateFileStratedgy;
+import com.picgure.api.manager.file.naming.CreateFileStrategy;
 import com.picgure.api.util.Constants;
 import org.apache.commons.io.FilenameUtils;
 
@@ -9,8 +9,7 @@ import java.io.File;
 /*
  * @author Jeet Prakash
  * */
-
-public class WindowsFile extends CreateFileStratedgy {
+public class WindowsFile extends CreateFileStrategy {
 
     private final int ABSOLUTE_PATH_LENGTH_LIMIT = 260;
 

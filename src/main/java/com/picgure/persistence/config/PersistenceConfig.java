@@ -1,5 +1,6 @@
 package com.picgure.persistence.config;
 
+import com.picgure.logging.PicgureLogger;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -9,6 +10,7 @@ import org.hibernate.cfg.Environment;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /*
  * @author Jeet Prakash
@@ -16,6 +18,8 @@ import java.util.Map;
 public class PersistenceConfig {
 
     private static final SessionFactory sessionFactory;
+
+    private static Logger logger = PicgureLogger.getLogger(PersistenceConfig.class);
 
     static {
         try {
@@ -27,9 +31,9 @@ public class PersistenceConfig {
                                     .getMetadataBuilder()
                                     .build();
             sessionFactory = metaData.getSessionFactoryBuilder().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ExceptionInInitializerError(e);
+        } catch (Exception ex) {
+            logger.severe("Unable to create Hibernate Session Factory " + ex.getMessage());
+            throw new ExceptionInInitializerError(ex);
         }
     }
 

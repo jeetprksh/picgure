@@ -1,7 +1,7 @@
 package com.picgure.api.manager.impl;
 
 import com.picgure.api.manager.FileService;
-import com.picgure.api.manager.file.naming.CreateFileStratedgy;
+import com.picgure.api.manager.file.naming.CreateFileStrategy;
 import com.picgure.api.manager.file.naming.impl.LinuxFile;
 import com.picgure.api.manager.file.naming.impl.WindowsFile;
 import com.picgure.api.util.Constants;
@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
@@ -24,10 +25,10 @@ public class FileServiceImpl implements FileService {
 	private Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
 
 	private final SettingsDao settingsDao;
-	private final CreateFileStratedgy createFileStratedgy;
+	private final CreateFileStrategy createFileStrategy;
 
 	public FileServiceImpl() {
-		this.createFileStratedgy = getCreateFileStratedgy();
+		this.createFileStrategy = getCreateFileStrategy();
 		this.settingsDao = new SettingsDaoImpl();
 	}
 	
@@ -41,41 +42,31 @@ public class FileServiceImpl implements FileService {
 	 * @return boolean
 	 */
 	@Override
-	public boolean saveImgurObjectAsFile(String subredditName, String fileName, InputStream is) {
-		String destFolderUrl = this.getBaseDirectory() + Constants.FILE_SEPERATOR + subredditName;
-		String destFileUrl = destFolderUrl + Constants.FILE_SEPERATOR + fileName;
-		FileOutputStream fileOutputStream;
-		File destFolder = new File(destFolderUrl);
-		File destFile = new File(destFileUrl);
-		boolean isSaved;
-		
-		try {
-			destFolder.mkdirs();
-			destFile = createFileStratedgy.createFile(destFolderUrl, fileName);
-			destFile.createNewFile();
-			fileOutputStream = new FileOutputStream(destFile);
-			IOUtils.copy(is, fileOutputStream);
-			fileOutputStream.close();
-			is.close();
-			isSaved = true;
-			logger.info("File saved " + destFile.getAbsolutePath());
-		} catch (Exception e) {
-		    e.printStackTrace();
-			isSaved = false;
-			this.logger.severe("Error occurred in saving file " + destFile.getAbsolutePath());
-		}
-		
+	public boolean saveImgurObjectAsFile(String subredditName, String fileName, InputStream is) throws IOException {
+		File destFolder = new File(this.getBaseDirectory() + Constants.FILE_SEPERATOR + subredditName);
+		destFolder.mkdirs();
+
+		File destFile = createFileStrategy.createFile(destFolder.getAbsolutePath(), fileName);
+		boolean isSaved = destFile.createNewFile();
+
+		FileOutputStream fileOutputStream = new FileOutputStream(destFile);
+		IOUtils.copy(is, fileOutputStream);
+
+		fileOutputStream.close();
+		is.close();
+
+		logger.info("File saved " + destFile.getAbsolutePath());
 		return isSaved;
 	}
 
 	/**
-	 * Function to replace the illegal characters in file name for windows
+	 * Function to replace the illegal characters in file name
 	 * 
 	 * @param name File Name
 	 * @return String
 	 */
 	@Override
-	public String replaceIllegalCharsInFileName(String name) {
+	public String replaceIllegalUrlChars(String name) {
 		return name.replaceAll("[\\/:*?<>|\"]", "_");
 	}
 
@@ -99,7 +90,7 @@ public class FileServiceImpl implements FileService {
 		return baseDir == null ? Constants.DEFAULT_DOWNLOAD_DIR : baseDir;
 	}
 
-	private CreateFileStratedgy getCreateFileStratedgy() {
+	private CreateFileStrategy getCreateFileStrategy() {
 		String os = System.getProperty("os.name");
 		return os.toLowerCase().contains("win") ? new WindowsFile() : new LinuxFile();
 	}

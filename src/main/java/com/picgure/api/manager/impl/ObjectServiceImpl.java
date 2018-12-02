@@ -17,7 +17,6 @@ import com.picgure.persistence.dao.ImgurObjectDao;
 import com.picgure.persistence.dao.impl.ImgurObjectDaoImpl;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +45,7 @@ public class ObjectServiceImpl implements ObjectService {
 	
 	@Override
 	public void downloadImgurObjectByHash(String hash) throws Exception {
-		// TODO
+		throw new Exception("To be implemented");
 	}
 	
 	@Override
@@ -62,20 +61,13 @@ public class ObjectServiceImpl implements ObjectService {
 		
 		do {
 			url = UrlUtil.constructImgurSubredditInfoUrl(imgurSearchQuery, count);
-			this.logger.info("REQUESTING INFO FOR :: " + url);
+			this.logger.fine("Requesting info for " + url);
 			count++;
-			try {
-				InputStream inputStream = httpClientService.getInputStreamForResource(url);
-				response = new ObjectMapper().readValue(inputStream, new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
-				beforeListSize = allImgurObjectAttrs.size();
-				allImgurObjectAttrs = addUniqueImgurObjects(allImgurObjectAttrs, response.getData());
-				this.logger.info("Objects found :: " + response.getData().size());
-				afterListSize = allImgurObjectAttrs.size();
-				this.logger.info("SIZES :: " + beforeListSize + "  " + afterListSize);
-			} catch (IOException e) {
-				this.logger.severe("Exception in listing objects at URL: " + url);
-				e.printStackTrace();
-			}
+			InputStream inputStream = httpClientService.getInputStreamForResource(url);
+			response = new ObjectMapper().readValue(inputStream, new TypeReference<ImgurSubredditObjectsResponse>() {/*noop*/});
+			beforeListSize = allImgurObjectAttrs.size();
+			allImgurObjectAttrs = addUniqueImgurObjects(allImgurObjectAttrs, response.getData());
+			afterListSize = allImgurObjectAttrs.size();
 		} while (beforeListSize != afterListSize);
 		
 		if (imgurSearchQuery.getSortOrder().equalsIgnoreCase("new")) {
@@ -109,7 +101,7 @@ public class ObjectServiceImpl implements ObjectService {
 			try {
 				imgurObjectDTO = TranslateObjects.getImgurObjectDTO(imgurObjectAttrs);
 
-				String cleanedFileName = fileService.replaceIllegalCharsInFileName(imgurObjectAttrs.getTitle() + imgurObjectAttrs.getExt());
+				String cleanedFileName = fileService.replaceIllegalUrlChars(imgurObjectAttrs.getTitle() + imgurObjectAttrs.getExt());
 				inputStream = httpClientService.getInputStreamForResource(imgurObjectUrl);
 				isSaved = fileService.saveImgurObjectAsFile(imgurObjectAttrs.getSubreddit(), cleanedFileName, inputStream);
 				

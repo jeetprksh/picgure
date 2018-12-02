@@ -23,12 +23,12 @@ public class HttpClientServiceImpl implements HttpClientService {
 		connection.setConnectTimeout(Constants.HTTP_CONNECTION_TIMEOUT);
 		connection.setReadTimeout(Constants.HTTP_CONNECTION_READ_TIMEOUT);
 
+		logger.info("Downloading object " + url);
 		int responseCode = connection.getResponseCode();
 		if (responseCode == 200) {
 			return connection.getInputStream();
 		} else {
-			logger.severe("Status Code not OK for :: " + url);
-			return null;
+			throw new Exception("Status Code not OK for " + url);
 		}
 	}
 }
