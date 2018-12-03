@@ -12,7 +12,7 @@ public interface ObjectService {
 	
 	public void downloadAllImgurObjectsInSubreddit(List<ImgurObjectAttrs> allImgurObjectAttrs);
 	
-	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs);
+	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) throws Exception;
 	
 	public void downloadImgurObjectByHash(String hash) throws Exception;
 	

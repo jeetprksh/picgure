@@ -47,14 +47,13 @@ class MainInputPanel extends JPanel {
 
     private JButton createDownloadButton() {
         JButton downloadButton = componentFactory.getButton("Download");
-        downloadButton.addActionListener(event ->{
+        downloadButton.addActionListener(event -> {
             try {
                 this.applicationCommands.download(this.redditNameField.getText(), "new");
             } catch (Exception ex) {
                 // TODO do something
             }
-        }
-        );
+        });
         return downloadButton;
     }
 

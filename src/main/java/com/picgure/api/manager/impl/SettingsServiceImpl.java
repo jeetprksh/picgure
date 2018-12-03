@@ -35,7 +35,7 @@ public class SettingsServiceImpl implements SettingsService {
     * compared to the one stored on database.
     * */
     @Override
-    public void saveDefaultSettings() throws RuntimeException {
+    public void saveDefaultSettings() {
 
         List<PicgureSettingDTO> storedSettings = repository.findAll();
         List<PicgureSettingDTO> newDefaultSettings = Collections.emptyList();
@@ -68,15 +68,15 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public void saveSetting(Map<String, String> settings) throws RuntimeException {
+    public void saveSetting(Map<String, String> settings) {
         logger.info("Saving settings " + settings);
         settings.forEach((key, val) -> repository.save(new PicgureSettingDTO(key, val)));
     }
 
     @Override
-    public void updateSetting(String name, String value) throws RuntimeException {
+    public void updateSetting(String name, String value) throws IllegalArgumentException {
         if (name.equalsIgnoreCase(Setting.ImageStore.toString()) && (!new File(value).isAbsolute())) {
-            throw new RuntimeException("Directory path must be absolute");
+            throw new IllegalArgumentException("Directory path must be absolute");
         }
 
         PicgureSettingDTO dto = repository.findByName(name);
