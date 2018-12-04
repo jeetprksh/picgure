@@ -2,7 +2,6 @@ package com.picgure.command;
 
 import com.picgure.api.manager.ObjectService;
 import com.picgure.api.manager.impl.ObjectServiceImpl;
-import com.picgure.api.util.Constants;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.logging.PicgureLogger;
@@ -16,6 +15,8 @@ import java.util.logging.Logger;
 public class ApplicationCommands {
 
 	private static Logger logger = PicgureLogger.getLogger(ApplicationCommands.class);
+	private static final String SORT_ORDER_NEW = "new";
+	private static final String SORT_ORDER_HOT = "hot";
 
 	private ObjectService objectService;
 
@@ -36,7 +37,7 @@ public class ApplicationCommands {
     }
 
     public List<ImgurObjectAttrs> probe(String redditName) throws Exception {
-		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, Constants.SORT_ORDER_NEW);
+		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, SORT_ORDER_NEW);
 		return objectService.getObjectsInSubreddit(imgurSearchQuery);
 	}
 

@@ -1,6 +1,5 @@
 package com.picgure.api.manager.file.naming;
 
-import com.picgure.api.util.Constants;
 import com.picgure.logging.PicgureLogger;
 import org.apache.commons.io.FilenameUtils;
 
@@ -12,9 +11,10 @@ import java.util.logging.Logger;
  * */
 public abstract class CreateFileStrategy {
 
-    public abstract File createFile(String destFolderUrl, String fileName);
-
     private static Logger logger = PicgureLogger.getLogger(CreateFileStrategy.class);
+    protected static final String FILE_SEPARATOR = "/";
+
+    public abstract File createFile(String destFolderUrl, String fileName);
 
     /**
      * Returns a file object which contains a unique file name.
@@ -33,7 +33,7 @@ public abstract class CreateFileStrategy {
 
         do {
             String uniqueFileName = fileName + "[" + i + "]";
-            uniqueFile = new File(fileParentDir + Constants.FILE_SEPERATOR + uniqueFileName + "." + fileExt);
+            uniqueFile = new File(fileParentDir + FILE_SEPARATOR + uniqueFileName + "." + fileExt);
             i++;
         } while (uniqueFile.exists());
 

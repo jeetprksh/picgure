@@ -4,7 +4,6 @@ import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.file.naming.CreateFileStrategy;
 import com.picgure.api.manager.file.naming.impl.LinuxFile;
 import com.picgure.api.manager.file.naming.impl.WindowsFile;
-import com.picgure.api.util.Constants;
 import com.picgure.api.util.Setting;
 import com.picgure.logging.PicgureLogger;
 import com.picgure.persistence.dao.SettingsDao;
@@ -22,7 +21,10 @@ import java.util.logging.Logger;
  * */
 public class FileServiceImpl implements FileService {
 
-	private Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
+	private static Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
+	private static final String DEFAULT_ROOT_DIR_NAME = "picgure";
+	private static final String DEFAULT_DOWNLOAD_DIR = "C:/downloader";
+    private static final String FILE_SEPARATOR = "/";
 
 	private final SettingsDao settingsDao;
 	private final CreateFileStrategy createFileStrategy;
@@ -31,11 +33,11 @@ public class FileServiceImpl implements FileService {
 		this.createFileStrategy = getCreateFileStrategy();
 		this.settingsDao = new SettingsDaoImpl();
 	}
-	
+
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.
 	 * Returns Boolean to tell the caller whether the object is saved or not.
-	 * 
+	 *
 	 * @param subredditName Name of the sub reddit
 	 * @param fileName Name of file with which the object is supposed to get saved
 	 * @param is Content of imgur object
@@ -43,7 +45,7 @@ public class FileServiceImpl implements FileService {
 	 */
 	@Override
 	public boolean saveImgurObjectAsFile(String subredditName, String fileName, InputStream is) throws IOException {
-		File destFolder = new File(this.getBaseDirectory() + Constants.FILE_SEPERATOR + subredditName);
+		File destFolder = new File(this.getBaseDirectory() + FILE_SEPARATOR + subredditName);
 		destFolder.mkdirs();
 
 		File destFile = createFileStrategy.createFile(destFolder.getAbsolutePath(), fileName);
@@ -61,7 +63,7 @@ public class FileServiceImpl implements FileService {
 
 	/**
 	 * Function to replace the illegal characters in file name
-	 * 
+	 *
 	 * @param name File Name
 	 * @return String
 	 */
@@ -73,7 +75,7 @@ public class FileServiceImpl implements FileService {
 	@Override
 	public File defaultImageStoreDirectory() {
 		String pathToHome = System.getProperty("user.home");
-		String pathToPicgureRoot = pathToHome + Constants.FILE_SEPERATOR + Constants.DEFAULT_ROOT_DIR_NAME;
+		String pathToPicgureRoot = pathToHome + FILE_SEPARATOR + DEFAULT_ROOT_DIR_NAME;
 		return new File(pathToPicgureRoot);
 	}
 
@@ -87,7 +89,7 @@ public class FileServiceImpl implements FileService {
 
 	private String getBaseDirectory() {
 		String baseDir = settingsDao.findByName(Setting.ImageStore.toString()).getValue();
-		return baseDir == null ? Constants.DEFAULT_DOWNLOAD_DIR : baseDir;
+		return baseDir == null ? DEFAULT_DOWNLOAD_DIR : baseDir;
 	}
 
 	private CreateFileStrategy getCreateFileStrategy() {
