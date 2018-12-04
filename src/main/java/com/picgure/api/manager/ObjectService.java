@@ -18,5 +18,5 @@ public interface ObjectService {
 	
 	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery) throws Exception;
 
-	public List<ImgurObjectAttrs> searchLocalRepoByTitleAndReddit(String title, String reddit);
+	public List<ImgurObjectAttrs> searchLocal(String title, String reddit);
 }

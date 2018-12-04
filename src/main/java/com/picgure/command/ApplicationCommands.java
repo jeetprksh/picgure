@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author Jeet Prakash
  * */
 public class ApplicationCommands {
-	
+
 	private static Logger logger = PicgureLogger.getLogger(ApplicationCommands.class);
 
 	private ObjectService objectService;
@@ -24,22 +24,15 @@ public class ApplicationCommands {
 	}
 
     public void download(String redditName, String order) throws Exception {
-
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, order);
-		logger.info("OBJECT :: " + imgurSearchQuery);
-		
-		List<ImgurObjectAttrs> allImgurObjectAttrs = objectService.getObjectsInSubreddit(imgurSearchQuery);
+		logger.info("Search query " + imgurSearchQuery);
 
-		logger.info("List size :: " + allImgurObjectAttrs.size());
+		List<ImgurObjectAttrs> imgurObjects = objectService.getObjectsInSubreddit(imgurSearchQuery);
 
-		// Calculate overall size
-		long size = 0;
-		for (ImgurObjectAttrs imgurObject : allImgurObjectAttrs) {
-			size += imgurObject.getSize();
-		}
-		logger.info("Overall Size :: " + size);
+		long size = imgurObjects.stream().mapToInt(o -> o.getSize()).sum();
+		logger.info("Overall Size " + size);
 
-		objectService.poolDownloadObjects(allImgurObjectAttrs);
+		objectService.poolDownloadObjects(imgurObjects);
     }
 
     public List<ImgurObjectAttrs> probe(String redditName) throws Exception {
@@ -49,7 +42,7 @@ public class ApplicationCommands {
 
 	public List<ImgurObjectAttrs> analysis(String title, String reddit) {
 		logger.info(reddit + " " + title);
-		return objectService.searchLocalRepoByTitleAndReddit(title, reddit);
+		return objectService.searchLocal(title, reddit);
 	}
-	
+
 }
