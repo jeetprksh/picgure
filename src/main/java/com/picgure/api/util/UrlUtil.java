@@ -1,5 +1,6 @@
 package com.picgure.api.util;
 
+import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 
 /*
@@ -22,8 +23,8 @@ public class UrlUtil {
                 index.toString() + ".json";
     }
 
-    public static String constructObjectDownloadUrl(String hash, String ext) {
-        return IMGUR_OBJECT_DOWNLOAD_BASE_URL + FILE_SEPARATOR + hash + ext;
+    public static String constructObjectDownloadUrl(ImgurObjectAttrs imgurObject) {
+        return IMGUR_OBJECT_DOWNLOAD_BASE_URL + FILE_SEPARATOR + imgurObject.getHash() + imgurObject.getExt();
     }
 
 }

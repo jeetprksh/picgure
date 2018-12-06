@@ -5,6 +5,7 @@ import com.picgure.api.manager.file.naming.CreateFileStrategy;
 import com.picgure.api.manager.file.naming.impl.LinuxFile;
 import com.picgure.api.manager.file.naming.impl.WindowsFile;
 import com.picgure.api.util.Setting;
+import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.logging.PicgureLogger;
 import com.picgure.persistence.dao.SettingsDao;
 import com.picgure.persistence.dao.impl.SettingsDaoImpl;
@@ -38,17 +39,16 @@ public class FileServiceImpl implements FileService {
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.
 	 * Returns Boolean to tell the caller whether the object is saved or not.
 	 *
-	 * @param subredditName Name of the sub reddit
-	 * @param fileName Name of file with which the object is supposed to get saved
+	 * @param imgurObject Imgur Object that is to be saved
 	 * @param is Content of imgur object
 	 * @return boolean
 	 */
 	@Override
-	public boolean saveImgurObjectAsFile(String subredditName, String fileName, InputStream is) throws IOException {
-		File destFolder = new File(this.getBaseDirectory() + FILE_SEPARATOR + subredditName);
+	public boolean saveImgurObjectAsFile(ImgurObjectAttrs imgurObject, InputStream is) throws IOException {
+		File destFolder = new File(this.getBaseDirectory() + FILE_SEPARATOR + imgurObject.getSubreddit());
 		destFolder.mkdirs();
 
-		File destFile = createFileStrategy.createFile(destFolder.getAbsolutePath(), fileName);
+		File destFile = createFileStrategy.createFile(destFolder.getAbsolutePath(), getLegalFileName(imgurObject));
 		boolean isSaved = destFile.createNewFile();
 
 		FileOutputStream fileOutputStream = new FileOutputStream(destFile);
@@ -62,14 +62,15 @@ public class FileServiceImpl implements FileService {
 	}
 
 	/**
-	 * Function to replace the illegal characters in file name
+	 * Function to get the legal file name for Imgur Object.
 	 *
-	 * @param name File Name
+	 * @param imgurObject Imgur Object
 	 * @return String
 	 */
 	@Override
-	public String replaceIllegalUrlChars(String name) {
-		return name.replaceAll("[\\/:*?<>|\"]", "_");
+	public String getLegalFileName(ImgurObjectAttrs imgurObject) {
+		String fileName = imgurObject.getTitle() + imgurObject.getExt();
+		return fileName.replaceAll("[\\/:*?<>|\"]", "_");
 	}
 
 	@Override

@@ -29,10 +29,6 @@ public class ApplicationCommands {
 		logger.info("Search query " + imgurSearchQuery);
 
 		List<ImgurObjectAttrs> imgurObjects = objectService.getObjectsInSubreddit(imgurSearchQuery);
-
-		long size = imgurObjects.stream().mapToInt(o -> o.getSize()).sum();
-		logger.info("Overall Size " + size);
-
 		objectService.poolDownloadObjects(imgurObjects);
     }
 

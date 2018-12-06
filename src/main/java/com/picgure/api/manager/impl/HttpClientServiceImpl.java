@@ -18,7 +18,7 @@ public class HttpClientServiceImpl implements HttpClientService {
 	private static final int HTTP_CONNECTION_READ_TIMEOUT = 60_000;
 
 	@Override
-	public InputStream getInputStreamForResource(String url) throws Exception {
+	public InputStream getInputStreamForUrl(String url) throws Exception {
 		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 		connection.setRequestMethod("GET");
 		connection.setConnectTimeout(HTTP_CONNECTION_TIMEOUT);

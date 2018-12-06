@@ -1,5 +1,7 @@
 package com.picgure.api.manager;
 
+import com.picgure.entity.ImgurObjectAttrs;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,18 +10,17 @@ import java.io.InputStream;
  * @author Jeet Prakash
  * */
 public interface FileService {
-	
-	public boolean saveImgurObjectAsFile(String subredditFolderName,
-										 String fileName,
+
+	public boolean saveImgurObjectAsFile(ImgurObjectAttrs imgurObject,
                                          InputStream is) throws IOException;
-	
+
 	/**
-	 * Function to replace the illegal characters in file name for windows
-	 * 
-	 * @param name
+	 * Function to get the legal file name for Imgur Object.
+	 *
+	 * @param imgurObject Imgur Object
 	 * @return
 	 */
-	public String replaceIllegalUrlChars(String name);
+	public String getLegalFileName(ImgurObjectAttrs imgurObject);
 
 	public File defaultImageStoreDirectory();
 

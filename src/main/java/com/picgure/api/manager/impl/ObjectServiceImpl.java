@@ -2,9 +2,9 @@ package com.picgure.api.manager.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.picgure.api.manager.FileService;
 import com.picgure.api.manager.HttpClientService;
 import com.picgure.api.manager.ObjectService;
+import com.picgure.api.thread.ObjectDownloader;
 import com.picgure.api.util.SaveStatus;
 import com.picgure.api.util.TranslateObjects;
 import com.picgure.api.util.UrlUtil;
@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /*
  * @author Jeet Prakash
@@ -35,12 +36,10 @@ public class ObjectServiceImpl implements ObjectService {
 	private static final int DEFAULT_NO_OF_DOWNLOAD_THREADS = 20;
 
 	private HttpClientService httpClientService;
-	private FileService fileService;
 	private ImgurObjectDao repository;
 
 	public ObjectServiceImpl() {
         this.httpClientService = new HttpClientServiceImpl();
-        this.fileService = new FileServiceImpl();
         this.repository = new ImgurObjectDaoImpl();
 	}
 
@@ -52,6 +51,7 @@ public class ObjectServiceImpl implements ObjectService {
 	@Override
 	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery) throws Exception {
 		String url;
+        InputStream is;
 		ImgurSubredditObjectsResponse response;
 		LinkedHashSet<ImgurObjectAttrs> uniqueImgurObjects = new LinkedHashSet<>();
 
@@ -63,8 +63,8 @@ public class ObjectServiceImpl implements ObjectService {
 			url = UrlUtil.constructSubredditInfoUrl(imgurSearchQuery, count);
 			this.logger.fine("Requesting info for " + url);
 			count++;
-			InputStream inputStream = httpClientService.getInputStreamForResource(url);
-			response = new ObjectMapper().readValue(inputStream, new TypeReference<ImgurSubredditObjectsResponse>() { });
+            is = httpClientService.getInputStreamForUrl(url);
+			response = new ObjectMapper().readValue(is, new TypeReference<ImgurSubredditObjectsResponse>() { });
 			beforeListSize = uniqueImgurObjects.size();
 			uniqueImgurObjects.addAll(response.getData());
 			afterListSize = uniqueImgurObjects.size();
@@ -73,50 +73,17 @@ public class ObjectServiceImpl implements ObjectService {
 		return new ArrayList<>(uniqueImgurObjects);
 	}
 
-	// TODO: Function is quite bulky, try to decompose it.
 	@Override
-	public void downloadAllImgurObjectsInSubreddit(List<ImgurObjectAttrs> allImgurObjectAttrs) {
-		String imgurObjectUrl;
-		ImgurObjectDTO imgurObjectDTO;
-		InputStream inputStream;
-		String fileName;
-		boolean isSaved;
+	public void poolDownloadObjects(List<ImgurObjectAttrs> imgurObjects) throws Exception {
+        long size = imgurObjects.stream().mapToInt(ImgurObjectAttrs::getSize).sum();
+        this.logger.fine(imgurObjects.size() + " objects set to download with overall size of " + size);
 
-		this.logger.fine(allImgurObjectAttrs.size() + " objects set to download");
-
-		for (ImgurObjectAttrs imgurObjectAttrs : allImgurObjectAttrs) {
-			List<ImgurObjectDTO> imgurObjectDTOList = repository.findByObjecthash(imgurObjectAttrs.getHash());
-
-			if (imgurObjectDTOList.size() > 0 && isDownloaded(imgurObjectAttrs, imgurObjectDTOList)) {
-				this.logger.info("Object with hash " + imgurObjectAttrs.getHash() + " already downloaded.");
-				continue;
-			}
-			this.logger.info("Downloading " + imgurObjectAttrs.getTitle());
-			imgurObjectDTO = TranslateObjects.getImgurObjectDTO(imgurObjectAttrs);
-			imgurObjectUrl = UrlUtil.constructObjectDownloadUrl(imgurObjectAttrs.getHash(), imgurObjectAttrs.getExt());
-			fileName = fileService.replaceIllegalUrlChars(imgurObjectAttrs.getTitle() + imgurObjectAttrs.getExt());
-			try {
-                inputStream = httpClientService.getInputStreamForResource(imgurObjectUrl);
-				isSaved = fileService.saveImgurObjectAsFile(imgurObjectAttrs.getSubreddit(), fileName, inputStream);
-				int saveStatus = isSaved ? SaveStatus.SAVED.getId() : SaveStatus.FAILED.getId();
-                imgurObjectDTO.setSavedstatus(saveStatus);
-				repository.save(imgurObjectDTO);
-			} catch (Exception ex) {
-				imgurObjectDTO.setSavedstatus(SaveStatus.FAILED.getId());
-				repository.save(imgurObjectDTO);
-				this.logger.severe("Unable to save object " + imgurObjectUrl + ". Cause: " + ex.getMessage());
-			}
-		}
-	}
-
-	@Override
-	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) throws Exception {
-		List<List<ImgurObjectAttrs>> choppedList = chopImgurObjList(allImgurObjectAttrs);
+		List<ImgurObjectAttrs> toBeDownloaded = imgurObjects.stream()
+				.filter(imgurObj -> !this.isDownloaded(imgurObj)).collect(Collectors.toList());
 
 		ExecutorService pool = Executors.newFixedThreadPool(DEFAULT_NO_OF_DOWNLOAD_THREADS);
-        for (List<ImgurObjectAttrs> imgurObjectAttrsList : choppedList) {
-            pool.submit(() -> downloadAllImgurObjectsInSubreddit(imgurObjectAttrsList));
-        }
+		toBeDownloaded.forEach(imgurObject ->
+				pool.submit(new ObjectDownloader(imgurObject, httpClientService, repository)));
 
         pool.shutdown();
         pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
@@ -132,13 +99,14 @@ public class ObjectServiceImpl implements ObjectService {
 		return attrs;
 	}
 
-	private boolean isDownloaded(ImgurObjectAttrs imgurObjectAttrs,
-								 List<ImgurObjectDTO> imgurObjectDTOList) {
+	private boolean isDownloaded(ImgurObjectAttrs imgurObject) {
+		List<ImgurObjectDTO> imgurObjectDTOList = repository.findByObjecthash(imgurObject.getHash());
 		boolean isDownloaded = false;
 		for (ImgurObjectDTO dto : imgurObjectDTOList) {
 			if (dto.getSavedstatus() == SaveStatus.SAVED.getId() &&
-					dto.getSize().intValue() == imgurObjectAttrs.getSize().intValue()) {
+					dto.getSize().intValue() == imgurObject.getSize().intValue()) {
 				isDownloaded = true;
+				this.logger.info("Object with hash " + imgurObject.getHash() + " already downloaded.");
 				break;
 			}
 		}
