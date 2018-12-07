@@ -2,6 +2,7 @@ package com.picgure.command;
 
 import com.picgure.api.manager.ObjectService;
 import com.picgure.api.manager.impl.ObjectServiceImpl;
+import com.picgure.api.thread.DownloadProgress;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.logging.PicgureLogger;
@@ -24,12 +25,12 @@ public class ApplicationCommands {
 		this.objectService = new ObjectServiceImpl();
 	}
 
-    public void download(String redditName, String order) throws Exception {
+    public DownloadProgress download(String redditName, String order) throws Exception {
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, order);
 		logger.info("Search query " + imgurSearchQuery);
 
 		List<ImgurObjectAttrs> imgurObjects = objectService.getObjectsInSubreddit(imgurSearchQuery);
-		objectService.poolDownloadObjects(imgurObjects);
+		return objectService.poolDownloadObjects(imgurObjects);
     }
 
     public List<ImgurObjectAttrs> probe(String redditName) throws Exception {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.picgure.api.manager.HttpClientService;
 import com.picgure.api.manager.ObjectService;
+import com.picgure.api.thread.DownloadProgress;
 import com.picgure.api.thread.ObjectDownloader;
 import com.picgure.api.util.SaveStatus;
 import com.picgure.api.util.TranslateObjects;
@@ -22,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 public class ObjectServiceImpl implements ObjectService {
 
 	private Logger logger = PicgureLogger.getLogger(ObjectServiceImpl.class);
-	private static final int DEFAULT_LIST_CHOP_SIZE = 10;
 	private static final int DEFAULT_NO_OF_DOWNLOAD_THREADS = 20;
 
 	private HttpClientService httpClientService;
@@ -74,19 +73,23 @@ public class ObjectServiceImpl implements ObjectService {
 	}
 
 	@Override
-	public void poolDownloadObjects(List<ImgurObjectAttrs> imgurObjects) throws Exception {
+	public DownloadProgress poolDownloadObjects(List<ImgurObjectAttrs> imgurObjects) throws Exception {
         long size = imgurObjects.stream().mapToInt(ImgurObjectAttrs::getSize).sum();
         this.logger.fine(imgurObjects.size() + " objects set to download with overall size of " + size);
 
 		List<ImgurObjectAttrs> toBeDownloaded = imgurObjects.stream()
 				.filter(imgurObj -> !this.isDownloaded(imgurObj)).collect(Collectors.toList());
 
+		if (toBeDownloaded.isEmpty())
+			throw new Exception("All the objects in this subreddit are already downloaded.");
+
 		ExecutorService pool = Executors.newFixedThreadPool(DEFAULT_NO_OF_DOWNLOAD_THREADS);
+        DownloadProgress progress = new DownloadProgress(toBeDownloaded.size());
 		toBeDownloaded.forEach(imgurObject ->
-				pool.submit(new ObjectDownloader(imgurObject, httpClientService, repository)));
+				pool.submit(new ObjectDownloader(imgurObject, httpClientService, repository, progress)));
 
         pool.shutdown();
-        pool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        return progress;
 	}
 
 	@Override
@@ -111,19 +114,6 @@ public class ObjectServiceImpl implements ObjectService {
 			}
 		}
 		return isDownloaded;
-	}
-
-	private List<List<ImgurObjectAttrs>> chopImgurObjList(List<ImgurObjectAttrs> allImgurObjectAttrs) {
-		List<List<ImgurObjectAttrs>> choppedList = new ArrayList<>();
-		int chunkSize = DEFAULT_LIST_CHOP_SIZE;
-
-		for (int start = 0; start < allImgurObjectAttrs.size(); start += chunkSize) {
-	        int end = Math.min(start + chunkSize, allImgurObjectAttrs.size());
-	        List<ImgurObjectAttrs> sublist = allImgurObjectAttrs.subList(start, end);
-	        choppedList.add(sublist);
-	    }
-
-		return choppedList;
 	}
 
 }

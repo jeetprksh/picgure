@@ -1,5 +1,6 @@
 package com.picgure.api.manager;
 
+import com.picgure.api.thread.DownloadProgress;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * */
 public interface ObjectService {
 
-	public void poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) throws Exception;
+	public DownloadProgress poolDownloadObjects(List<ImgurObjectAttrs> allImgurObjectAttrs) throws Exception;
 
 	public void downloadImgurObjectByHash(String hash) throws Exception;
 

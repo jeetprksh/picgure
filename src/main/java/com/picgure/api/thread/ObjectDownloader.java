@@ -13,13 +13,12 @@ import com.picgure.persistence.dao.ImgurObjectDao;
 import com.picgure.persistence.dto.ImgurObjectDTO;
 
 import java.io.InputStream;
-import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 /*
  * @author Jeet Prakash
  * */
-public class ObjectDownloader implements Callable<DownloadResult> {
+public class ObjectDownloader implements Runnable {
 
     private Logger logger = PicgureLogger.getLogger(ObjectServiceImpl.class);
 
@@ -27,18 +26,21 @@ public class ObjectDownloader implements Callable<DownloadResult> {
     private HttpClientService httpClientService;
     private FileService fileService;
     private ImgurObjectDao repository;
+    private DownloadProgress progress;
 
     public ObjectDownloader(ImgurObjectAttrs imgurObject,
                             HttpClientService httpClientService,
-                            ImgurObjectDao repository) {
+                            ImgurObjectDao repository,
+                            DownloadProgress progress) {
         this.imgurObject = imgurObject;
         this.fileService = new FileServiceImpl();
         this.httpClientService = httpClientService;
         this.repository = repository;
+        this.progress = progress;
     }
 
     @Override
-    public DownloadResult call() throws Exception {
+    public void run() {
         this.logger.info("Downloading " + imgurObject.getTitle());
         ImgurObjectDTO imgurObjectDTO = TranslateObjects.getImgurObjectDTO(imgurObject);
         String imgurObjectUrl = UrlUtil.constructObjectDownloadUrl(imgurObject);
@@ -46,14 +48,13 @@ public class ObjectDownloader implements Callable<DownloadResult> {
             InputStream is = httpClientService.getInputStreamForUrl(imgurObjectUrl);
             fileService.saveImgurObjectAsFile(imgurObject, is);
             imgurObjectDTO.setSavedstatus(SaveStatus.SAVED.getId());
-            repository.save(imgurObjectDTO);
-            return new DownloadResult(imgurObject, true, null);
+            progress.addResult(new DownloadResult(imgurObject, true, null));
         } catch (Exception ex) {
             imgurObjectDTO.setSavedstatus(SaveStatus.FAILED.getId());
-            repository.save(imgurObjectDTO);
-            this.logger.severe("Unable to save object " + imgurObjectUrl + ". Cause: " + ex.getMessage());
-            return new DownloadResult(imgurObject, false, ex);
+            this.logger.severe("Unable to download object " + imgurObjectUrl + ". Cause: " + ex.getMessage());
+            progress.addResult(new DownloadResult(imgurObject, false, ex));
         }
+        repository.save(imgurObjectDTO);
     }
 
 }
