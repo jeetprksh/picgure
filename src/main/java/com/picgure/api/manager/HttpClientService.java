@@ -6,7 +6,7 @@ import java.io.InputStream;
  * @author Jeet Prakash
  * */
 public interface HttpClientService {
-	
-	public InputStream getInputStreamForResource(String url) throws Exception;
+
+	public InputStream getInputStreamForUrl(String url) throws Exception;
 
 }

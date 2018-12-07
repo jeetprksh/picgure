@@ -8,7 +8,6 @@ import java.util.logging.*;
 public class PicgureLogger {
 
     private static Logger logger = Logger.getLogger(PicgureLogger.class.getName());
-
     private static Handler fileHandler;
 
     static {
@@ -24,8 +23,6 @@ public class PicgureLogger {
     public static Logger getLogger(Class klass) {
         Logger appLogger = Logger.getLogger(klass.getName());
         appLogger.setLevel(Level.FINE);
-
-        appLogger.addHandler(new ConsoleHandler());
         appLogger.addHandler(fileHandler);
         return appLogger;
     }

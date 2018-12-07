@@ -11,9 +11,10 @@ public class LogFormatter extends Formatter {
 
     @Override
     public String format(LogRecord record) {
-        return record.getSourceClassName() + " "
+        return new Date(record.getMillis()) + " "
+                + record.getLevel() + " "
+                + record.getSourceClassName() + " "
                 + record.getSourceMethodName() + " "
-                + new Date(record.getMillis()) + " "
                 + record.getMessage() + "\n";
     }
 

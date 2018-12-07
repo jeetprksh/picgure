@@ -9,13 +9,9 @@ import com.picgure.persistence.dao.impl.SettingsDaoImpl;
 import com.picgure.persistence.dto.PicgureSettingDTO;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /*
  * @author Jeet Prakash
@@ -40,8 +36,8 @@ public class SettingsServiceImpl implements SettingsService {
     * */
     @Override
     public void saveDefaultSettings() {
-        List<PicgureSettingDTO> storedSettings = StreamSupport.stream(repository.findAll().spliterator(), false)
-                                                                .collect(Collectors.toList());
+
+        List<PicgureSettingDTO> storedSettings = repository.findAll();
         List<PicgureSettingDTO> newDefaultSettings = Collections.emptyList();
 
         for (PicgureSettingDTO defaultSettingDTO : getDefaultSettings()) {
@@ -65,39 +61,32 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public Map<String, String> getSettings() {
-        Map<String, String> settings =
-                StreamSupport.stream(repository.findAll().spliterator(), false)
-                     .collect(Collectors.toMap(dto -> dto.getName(), dto -> dto.getValue()));
-        logger.info("Get settings " + settings);
+        Map<String, String> settings = repository.findAll().stream()
+                .collect(Collectors.toMap(dto -> dto.getName(), dto -> dto.getValue()));
+        logger.info("Fetched settings " + settings);
         return settings;
     }
 
     @Override
-    public void printSettings() {
-        logger.info("Printing the settings");
-        this.getSettings().forEach((key, val) -> System.out.println(key.toString() + " " + val.toString()));
-    }
-
-    @Override
     public void saveSetting(Map<String, String> settings) {
-        logger.info("Saving the settings " + settings);
+        logger.info("Saving settings " + settings);
         settings.forEach((key, val) -> repository.save(new PicgureSettingDTO(key, val)));
     }
 
     @Override
-    public void updateSetting(String name, String value) {
-        if (name.equalsIgnoreCase(Setting.ImageStore.toString())
-                && (!new File(value).isAbsolute())) {
-            System.out.println("Directory path must be absolute");
-            return;
+    public void updateSetting(String name, String value) throws IllegalArgumentException {
+        if (name.equalsIgnoreCase(Setting.ImageStore.toString()) && (!new File(value).isAbsolute())) {
+            throw new IllegalArgumentException("Directory path must be absolute");
         }
-        logger.info("Updating the setting");
+
         PicgureSettingDTO dto = repository.findByName(name);
-        if (dto != null) {
+        if (!Objects.isNull(dto)) {
             dto.setValue(value);
             repository.save(dto);
             logger.info("Updated the setting " + dto.toString());
-        } else System.out.println("Invalid setting name");
+        } else {
+            logger.warning("Invalid setting name for update " + name);
+        }
     }
 
     private List<PicgureSettingDTO> getDefaultSettings() {

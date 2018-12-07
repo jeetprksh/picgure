@@ -1,11 +1,12 @@
 package com.picgure.entity;
 
-import javax.annotation.Generated;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+import javax.annotation.Generated;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
@@ -751,27 +752,21 @@ public class ImgurObjectAttrs {
         this.favorited = favorited;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((hash == null) ? 0 : hash.hashCode());
-		return result;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImgurObjectAttrs)) return false;
+        ImgurObjectAttrs that = (ImgurObjectAttrs) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(getHash(), that.getHash()) &&
+                Objects.equals(getTitle(), that.getTitle()) &&
+                Objects.equals(getSize(), that.getSize());
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof ImgurObjectAttrs){
-			if (this.getHash().equals(((ImgurObjectAttrs) obj).getHash()) || 
-					(this.getTitle().equals(((ImgurObjectAttrs) obj).getTitle()) && this.getSize().intValue() == ((ImgurObjectAttrs)obj).getSize().intValue())){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
-			return false;
-		}
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getHash(), getTitle(), getSize());
+    }
 
     @Override
     public String toString() {

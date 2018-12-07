@@ -1,10 +1,8 @@
 package com.picgure.command;
 
 import com.picgure.api.manager.ObjectService;
-import com.picgure.api.manager.SettingsService;
 import com.picgure.api.manager.impl.ObjectServiceImpl;
-import com.picgure.api.manager.impl.SettingsServiceImpl;
-import com.picgure.api.util.Constants;
+import com.picgure.api.thread.DownloadProgress;
 import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 import com.picgure.logging.PicgureLogger;
@@ -16,52 +14,33 @@ import java.util.logging.Logger;
  * @author Jeet Prakash
  * */
 public class ApplicationCommands {
-	
+
 	private static Logger logger = PicgureLogger.getLogger(ApplicationCommands.class);
+	private static final String SORT_ORDER_NEW = "new";
+	private static final String SORT_ORDER_HOT = "hot";
 
 	private ObjectService objectService;
-	private SettingsService settingsService;
 
 	public ApplicationCommands() {
 		this.objectService = new ObjectServiceImpl();
-		this.settingsService = new SettingsServiceImpl();
 	}
 
-    public void download(String redditName, String order) throws Exception {
-
+    public DownloadProgress download(String redditName, String order) throws Exception {
 		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, order);
-		logger.info("OBJECT :: " + imgurSearchQuery);
-		
-		List<ImgurObjectAttrs> allImgurObjectAttrs = objectService.getObjectsInSubreddit(imgurSearchQuery);
+		logger.info("Search query " + imgurSearchQuery);
 
-		logger.info("List size :: " + allImgurObjectAttrs.size());
-
-		// Calculate overall size
-		long size = 0;
-		for (ImgurObjectAttrs imgurObject : allImgurObjectAttrs) {
-			size += imgurObject.getSize();
-		}
-		logger.info("Overall Size :: " + size);
-
-		objectService.poolDownloadObjects(allImgurObjectAttrs);
+		List<ImgurObjectAttrs> imgurObjects = objectService.getObjectsInSubreddit(imgurSearchQuery);
+		return objectService.poolDownloadObjects(imgurObjects);
     }
 
     public List<ImgurObjectAttrs> probe(String redditName) throws Exception {
-		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, Constants.SORT_ORDER_NEW);
+		ImgurSearchQuery imgurSearchQuery = new ImgurSearchQuery(redditName, SORT_ORDER_NEW);
 		return objectService.getObjectsInSubreddit(imgurSearchQuery);
 	}
 
 	public List<ImgurObjectAttrs> analysis(String title, String reddit) {
 		logger.info(reddit + " " + title);
-		return objectService.searchLocalRepoByTitleAndReddit(title, reddit);
+		return objectService.searchLocal(title, reddit);
 	}
 
-	public void settings(String setting, String value) {
-		if (!setting.equals(Constants.BLANK_STRING)) {
-			settingsService.updateSetting(setting, value);
-		} else {
-			settingsService.printSettings();
-		}
-	}
-	
 }

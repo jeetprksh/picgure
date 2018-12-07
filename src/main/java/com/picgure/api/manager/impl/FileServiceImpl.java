@@ -1,11 +1,11 @@
 package com.picgure.api.manager.impl;
 
 import com.picgure.api.manager.FileService;
-import com.picgure.api.manager.file.naming.CreateFileStratedgy;
+import com.picgure.api.manager.file.naming.CreateFileStrategy;
 import com.picgure.api.manager.file.naming.impl.LinuxFile;
 import com.picgure.api.manager.file.naming.impl.WindowsFile;
-import com.picgure.api.util.Constants;
 import com.picgure.api.util.Setting;
+import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.logging.PicgureLogger;
 import com.picgure.persistence.dao.SettingsDao;
 import com.picgure.persistence.dao.impl.SettingsDaoImpl;
@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
@@ -21,68 +22,61 @@ import java.util.logging.Logger;
  * */
 public class FileServiceImpl implements FileService {
 
-	private Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
+	private static Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
+	private static final String DEFAULT_ROOT_DIR_NAME = "picgure";
+	private static final String DEFAULT_DOWNLOAD_DIR = "C:/downloader";
+    private static final String FILE_SEPARATOR = "/";
 
 	private final SettingsDao settingsDao;
-	private final CreateFileStratedgy createFileStratedgy;
+	private final CreateFileStrategy createFileStrategy;
 
 	public FileServiceImpl() {
-		this.createFileStratedgy = getCreateFileStratedgy();
+		this.createFileStrategy = getCreateFileStrategy();
 		this.settingsDao = new SettingsDaoImpl();
 	}
-	
+
 	/**
 	 * Function to save the Imgur Object, from its InputStream , as a file with appropriate folder structure.
 	 * Returns Boolean to tell the caller whether the object is saved or not.
-	 * 
-	 * @param subredditName Name of the sub reddit
-	 * @param fileName Name of file with which the object is supposed to get saved
+	 *
+	 * @param imgurObject Imgur Object that is to be saved
 	 * @param is Content of imgur object
 	 * @return boolean
 	 */
 	@Override
-	public boolean saveImgurObjectAsFile(String subredditName, String fileName, InputStream is) {
-		String destFolderUrl = this.getBaseDirectory() + Constants.FILE_SEPERATOR + subredditName;
-		String destFileUrl = destFolderUrl + Constants.FILE_SEPERATOR + fileName;
-		FileOutputStream fileOutputStream;
-		File destFolder = new File(destFolderUrl);
-		File destFile = new File(destFileUrl);
-		boolean isSaved;
-		
-		try {
-			destFolder.mkdirs();
-			destFile = createFileStratedgy.createFile(destFolderUrl, fileName);
-			destFile.createNewFile();
-			fileOutputStream = new FileOutputStream(destFile);
-			IOUtils.copy(is, fileOutputStream);
-			fileOutputStream.close();
-			is.close();
-			isSaved = true;
-			logger.info("File saved " + destFile.getAbsolutePath());
-		} catch (Exception e) {
-		    e.printStackTrace();
-			isSaved = false;
-			this.logger.severe("Error occurred in saving file " + destFile.getAbsolutePath());
-		}
-		
+	public boolean saveImgurObjectAsFile(ImgurObjectAttrs imgurObject, InputStream is) throws IOException {
+		File destFolder = new File(this.getBaseDirectory() + FILE_SEPARATOR + imgurObject.getSubreddit());
+		destFolder.mkdirs();
+
+		File destFile = createFileStrategy.createFile(destFolder.getAbsolutePath(), getLegalFileName(imgurObject));
+		boolean isSaved = destFile.createNewFile();
+
+		FileOutputStream fileOutputStream = new FileOutputStream(destFile);
+		IOUtils.copy(is, fileOutputStream);
+
+		fileOutputStream.close();
+		is.close();
+
+		logger.info("File saved " + destFile.getAbsolutePath());
 		return isSaved;
 	}
 
 	/**
-	 * Function to replace the illegal characters in file name for windows
-	 * 
-	 * @param name File Name
+	 * Function to get the legal file name for Imgur Object.
+	 *
+	 * @param imgurObject Imgur Object
 	 * @return String
 	 */
 	@Override
-	public String replaceIllegalCharsInFileName(String name) {
-		return name.replaceAll("[\\/:*?<>|\"]", "_");
+	public String getLegalFileName(ImgurObjectAttrs imgurObject) {
+		String fileName = imgurObject.getTitle() + imgurObject.getExt();
+		return fileName.replaceAll("[\\/:*?<>|\"]", "_");
 	}
 
 	@Override
 	public File defaultImageStoreDirectory() {
 		String pathToHome = System.getProperty("user.home");
-		String pathToPicgureRoot = pathToHome + Constants.FILE_SEPERATOR + Constants.DEFAULT_ROOT_DIR_NAME;
+		String pathToPicgureRoot = pathToHome + FILE_SEPARATOR + DEFAULT_ROOT_DIR_NAME;
 		return new File(pathToPicgureRoot);
 	}
 
@@ -96,10 +90,10 @@ public class FileServiceImpl implements FileService {
 
 	private String getBaseDirectory() {
 		String baseDir = settingsDao.findByName(Setting.ImageStore.toString()).getValue();
-		return baseDir == null ? Constants.DEFAULT_DOWNLOAD_DIR : baseDir;
+		return baseDir == null ? DEFAULT_DOWNLOAD_DIR : baseDir;
 	}
 
-	private CreateFileStratedgy getCreateFileStratedgy() {
+	private CreateFileStrategy getCreateFileStrategy() {
 		String os = System.getProperty("os.name");
 		return os.toLowerCase().contains("win") ? new WindowsFile() : new LinuxFile();
 	}

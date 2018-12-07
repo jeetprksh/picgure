@@ -1,5 +1,7 @@
 package com.picgure.ui.root;
 
+import com.picgure.api.thread.DownloadProgress;
+import com.picgure.api.thread.DownloadResult;
 import com.picgure.command.ApplicationCommands;
 import com.picgure.logging.PicgureLogger;
 import com.picgure.ui.factory.UiComponentFactory;
@@ -7,12 +9,15 @@ import com.picgure.ui.probe.ProbeFrame;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Logger;
 
 /*
  * @author Jeet Prakash
  * */
-class MainInputPanel extends JPanel {
+class MainInputPanel extends JPanel implements Observer {
 
     private static Logger logger = PicgureLogger.getLogger(MainInputPanel.class);
 
@@ -47,14 +52,15 @@ class MainInputPanel extends JPanel {
 
     private JButton createDownloadButton() {
         JButton downloadButton = componentFactory.getButton("Download");
-        downloadButton.addActionListener(event ->{
+        downloadButton.addActionListener(event -> {
             try {
-                this.applicationCommands.download(this.redditNameField.getText(), "new");
+                DownloadProgress progress = applicationCommands.download(this.redditNameField.getText(), "new");
+                progress.addObserver(this);
             } catch (Exception ex) {
-                // TODO do something
+                String message = "Error in downloading. Cause: " + ex.getMessage();
+                JOptionPane.showMessageDialog(null, message, "Download Error", JOptionPane.ERROR_MESSAGE);
             }
-        }
-        );
+        });
         return downloadButton;
     }
 
@@ -68,4 +74,17 @@ class MainInputPanel extends JPanel {
         return probeButton;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        DownloadProgress progress = (DownloadProgress) o;
+        DownloadResult result = (DownloadResult) arg;
+        if (!Objects.isNull(result.getException())) {
+            String message = "Error in downloading " + result.getImgurObject().getTitle()
+                    + ". Cause: " + result.getException().getMessage();
+            JOptionPane.showMessageDialog(null, message, "Download Error", JOptionPane.ERROR_MESSAGE);
+        }
+        if (progress.getResults().size() == progress.getObjectCount()) {
+            JOptionPane.showMessageDialog(null, "Download finished.", "Done", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 }

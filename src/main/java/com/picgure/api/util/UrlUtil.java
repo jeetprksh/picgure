@@ -1,25 +1,30 @@
 package com.picgure.api.util;
 
+import com.picgure.entity.ImgurObjectAttrs;
 import com.picgure.entity.ImgurSearchQuery;
 
 /*
  * @author Jeet Prakash
  * */
-
 public class UrlUtil {
 
-    public static String constructImgurSubredditInfoUrl(ImgurSearchQuery imgurSearchQuery, Integer index) {
+    private static final String IMGUR_API_SUBREDDIT_INFO_BASE_URL = "https://imgur.com";
+    private static final String IMGUR_OBJECT_DOWNLOAD_BASE_URL = "http://i.imgur.com";
+    private static final String IMGUR_BASE = "r";
+    private static final String FILE_SEPARATOR = "/";
 
+    public static String constructSubredditInfoUrl(ImgurSearchQuery imgurSearchQuery, Integer index) {
         // http://imgur.com/r/right/new/page/234.json
-        return Constants.IMGUR_API_SUBREDDIT_INFO_BASE_URL + Constants.FILE_SEPERATOR + Constants.IMGUR_BASE +
-                Constants.FILE_SEPERATOR + imgurSearchQuery.getRedditName() + Constants.FILE_SEPERATOR +
-                imgurSearchQuery.getSortOrder() + Constants.FILE_SEPERATOR + "page" + Constants.FILE_SEPERATOR +
+        return IMGUR_API_SUBREDDIT_INFO_BASE_URL + FILE_SEPARATOR +
+                IMGUR_BASE + FILE_SEPARATOR +
+                imgurSearchQuery.getRedditName() + FILE_SEPARATOR +
+                imgurSearchQuery.getSortOrder() + FILE_SEPARATOR +
+                "page" + FILE_SEPARATOR +
                 index.toString() + ".json";
-
     }
 
-    public static String constructImgurObjectDownloadUrl(String hash, String ext) {
-        return Constants.IMGUR_OBJECT_DOWNLOAD_BASE_URL + Constants.FILE_SEPERATOR + hash + ext;
+    public static String constructObjectDownloadUrl(ImgurObjectAttrs imgurObject) {
+        return IMGUR_OBJECT_DOWNLOAD_BASE_URL + FILE_SEPARATOR + imgurObject.getHash() + imgurObject.getExt();
     }
 
 }
