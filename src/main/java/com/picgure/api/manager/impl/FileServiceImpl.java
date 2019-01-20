@@ -61,18 +61,6 @@ public class FileServiceImpl implements FileService {
 		return isSaved;
 	}
 
-	/**
-	 * Function to get the legal file name for Imgur Object.
-	 *
-	 * @param imgurObject Imgur Object
-	 * @return String
-	 */
-	@Override
-	public String getLegalFileName(ImgurObjectAttrs imgurObject) {
-		String fileName = imgurObject.getTitle() + imgurObject.getExt();
-		return fileName.replaceAll("[\\/:*?<>|\"]", "_");
-	}
-
 	@Override
 	public File defaultImageStoreDirectory() {
 		String pathToHome = System.getProperty("user.home");
@@ -86,6 +74,17 @@ public class FileServiceImpl implements FileService {
 		    logger.info("Creating the image store at " + imageStore.getAbsolutePath());
 		    imageStore.mkdir();
         }
+	}
+
+	/**
+	 * Function to get the legal file name for Imgur Object.
+	 *
+	 * @param imgurObject Imgur Object
+	 * @return String
+	 */
+	private String getLegalFileName(ImgurObjectAttrs imgurObject) {
+		String fileName = imgurObject.getTitle() + imgurObject.getExt();
+		return fileName.replaceAll("[\\/:*?<>|\"]", "_");
 	}
 
 	private String getBaseDirectory() {

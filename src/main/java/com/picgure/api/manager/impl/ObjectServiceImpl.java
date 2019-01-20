@@ -95,11 +95,7 @@ public class ObjectServiceImpl implements ObjectService {
 	@Override
 	public List<ImgurObjectAttrs> searchLocal(String title, String reddit) {
 		List<ImgurObjectDTO> dtos = repository.search(title, reddit);
-		List<ImgurObjectAttrs> attrs = new ArrayList<>();
-		for (ImgurObjectDTO dto : dtos) {
-			attrs.add(TranslateObjects.getImgurObject(dto));
-		}
-		return attrs;
+		return dtos.stream().map(TranslateObjects::getImgurObject).collect(Collectors.toList());
 	}
 
 	private boolean isDownloaded(ImgurObjectAttrs imgurObject) {

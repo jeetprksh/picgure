@@ -18,10 +18,10 @@ public class PicgureLauncher {
 	public static void main(String[] args) {
 		logger.info("Starting the Application.");
 		new PicgureAppEventListener().syncSettingsFileStore();
-		new PicgureLauncher().run();
+		new PicgureLauncher().launch();
 	}
 
-	private void run() {
+	private void launch() {
 		java.awt.EventQueue.invokeLater(() -> {
 			try {
 				rootFrame.setVisible(true);

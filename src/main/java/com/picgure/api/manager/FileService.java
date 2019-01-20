@@ -14,14 +14,6 @@ public interface FileService {
 	public boolean saveImgurObjectAsFile(ImgurObjectAttrs imgurObject,
                                          InputStream is) throws IOException;
 
-	/**
-	 * Function to get the legal file name for Imgur Object.
-	 *
-	 * @param imgurObject Imgur Object
-	 * @return
-	 */
-	public String getLegalFileName(ImgurObjectAttrs imgurObject);
-
 	public File defaultImageStoreDirectory();
 
 	public void createImageStoreDirectory(File imageStore);
