@@ -25,7 +25,7 @@ public class FileServiceImpl implements FileService {
 	private static Logger logger = PicgureLogger.getLogger(FileServiceImpl.class);
 	private static final String DEFAULT_ROOT_DIR_NAME = "picgure";
 	private static final String DEFAULT_DOWNLOAD_DIR = "C:/downloader";
-    private static final String FILE_SEPARATOR = "/";
+	private static final String FILE_SEPARATOR = "/";
 
 	private final SettingsDao settingsDao;
 	private final CreateFileStrategy createFileStrategy;

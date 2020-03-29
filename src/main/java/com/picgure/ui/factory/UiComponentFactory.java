@@ -27,4 +27,12 @@ public class UiComponentFactory {
         button.setFont(new Font("Dialog", Font.PLAIN, 13));
         return button;
     }
+
+    public JProgressBar getProgressBar() {
+        JProgressBar progressBar = new JProgressBar();
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(10);
+        progressBar.setBounds(22, 80, 450, 30);
+        return progressBar;
+    }
 }

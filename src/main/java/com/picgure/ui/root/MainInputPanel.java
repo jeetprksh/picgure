@@ -7,12 +7,18 @@ import com.picgure.logging.PicgureLogger;
 import com.picgure.ui.factory.UiComponentFactory;
 import com.picgure.ui.probe.ProbeFrame;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
 
 /*
  * @author Jeet Prakash
@@ -24,6 +30,7 @@ class MainInputPanel extends JPanel implements Observer {
     private ProbeFrame probeFrame;
     private ApplicationCommands applicationCommands;
     private UiComponentFactory componentFactory;
+    private JProgressBar progressBar;
 
     private JTextField redditNameField;
 
@@ -40,6 +47,12 @@ class MainInputPanel extends JPanel implements Observer {
         this.add(this.redditNameField);
         this.add(createDownloadButton());
         this.add(createProbeButton());
+
+        progressBar = new JProgressBar();
+        progressBar.setMinimum(0);
+        progressBar.setMaximum(10);
+        progressBar.setBounds(22, 80, 450, 30);
+        this.add(progressBar);
     }
 
     private JLabel createRedditLabel() {
@@ -54,8 +67,14 @@ class MainInputPanel extends JPanel implements Observer {
         JButton downloadButton = componentFactory.getButton("Download");
         downloadButton.addActionListener(event -> {
             try {
-                DownloadProgress progress = applicationCommands.download(this.redditNameField.getText(), "new");
-                progress.addObserver(this);
+                for(int i=0; i<10; i++) {
+                    Thread.sleep(1000);
+                    System.out.println("Setting value to " + i);
+                    progressBar.setValue(i);
+                    progressBar.repaint();
+                }
+                //DownloadProgress progress = applicationCommands.download(this.redditNameField.getText(), "new");
+                //progress.addObserver(this);
             } catch (Exception ex) {
                 String message = "Error in downloading. Cause: " + ex.getMessage();
                 JOptionPane.showMessageDialog(null, message, "Download Error", JOptionPane.ERROR_MESSAGE);
