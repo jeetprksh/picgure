@@ -14,7 +14,7 @@ import java.util.Map;
 public class ImgurObjectDaoImpl extends CommonDao implements ImgurObjectDao {
 
     @Override
-    public Long save(ImgurObjectDTO dto) throws HibernateException {
+    public Integer save(ImgurObjectDTO dto) throws HibernateException {
         return saveEntity(dto);
     }
 

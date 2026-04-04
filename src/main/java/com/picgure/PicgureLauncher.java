@@ -17,6 +17,7 @@ public class PicgureLauncher {
 
 	public static void main(String[] args) {
 		logger.info("Starting the Application.");
+		System.setProperty("sun.java2d.uiScale", "1.0");
 		new PicgureAppEventListener().syncSettingsFileStore();
 		new PicgureLauncher().run();
 	}

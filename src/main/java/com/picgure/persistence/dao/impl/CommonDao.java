@@ -19,9 +19,9 @@ public class CommonDao {
         sessionFactory = PersistenceConfig.getSessionFactory();
     }
 
-    protected <T> Long saveEntity(T obj) throws HibernateException {
+    protected <T> Integer saveEntity(T obj) throws HibernateException {
         Session session = sessionFactory.openSession();
-        Long id = (Long) session.save(obj);
+        Integer id = (Integer) session.save(obj);
         session.close();
         return id;
     }

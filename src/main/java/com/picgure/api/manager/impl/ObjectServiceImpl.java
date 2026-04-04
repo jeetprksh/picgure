@@ -50,7 +50,7 @@ public class ObjectServiceImpl implements ObjectService {
 	@Override
 	public List<ImgurObjectAttrs> getObjectsInSubreddit(ImgurSearchQuery imgurSearchQuery) throws Exception {
 		String url;
-        InputStream is;
+		InputStream is;
 		ImgurSubredditObjectsResponse response;
 		LinkedHashSet<ImgurObjectAttrs> uniqueImgurObjects = new LinkedHashSet<>();
 
@@ -62,8 +62,9 @@ public class ObjectServiceImpl implements ObjectService {
 			url = UrlUtil.constructSubredditInfoUrl(imgurSearchQuery, count);
 			this.logger.fine("Requesting info for " + url);
 			count++;
-            is = httpClientService.getInputStreamForUrl(url);
-			response = new ObjectMapper().readValue(is, new TypeReference<ImgurSubredditObjectsResponse>() { });
+			is = httpClientService.getInputStreamForUrl(url);
+			// response = new ObjectMapper().readValue(is, new TypeReference<ImgurSubredditObjectsResponse>() { });
+			response = new ObjectMapper().readValue(is, new TypeReference<Object>() { });
 			beforeListSize = uniqueImgurObjects.size();
 			uniqueImgurObjects.addAll(response.getData());
 			afterListSize = uniqueImgurObjects.size();

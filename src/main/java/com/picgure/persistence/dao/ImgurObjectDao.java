@@ -10,7 +10,7 @@ import java.util.List;
  * */
 public interface ImgurObjectDao {
 
-	public Long save(ImgurObjectDTO dto) throws HibernateException;
+	public Integer save(ImgurObjectDTO dto) throws HibernateException;
 	
 	public List<ImgurObjectDTO> findByObjecthash(String objectHash) throws HibernateException;;
 	

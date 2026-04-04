@@ -38,7 +38,7 @@ public class SettingsServiceImpl implements SettingsService {
     public void saveDefaultSettings() {
 
         List<PicgureSettingDTO> storedSettings = repository.findAll();
-        List<PicgureSettingDTO> newDefaultSettings = Collections.emptyList();
+        List<PicgureSettingDTO> newDefaultSettings = new ArrayList<>();
 
         for (PicgureSettingDTO defaultSettingDTO : getDefaultSettings()) {
             boolean have = false;
