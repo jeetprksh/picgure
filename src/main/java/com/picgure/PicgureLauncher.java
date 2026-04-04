@@ -1,5 +1,6 @@
 package com.picgure;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import com.picgure.logging.PicgureLogger;
 import com.picgure.ui.root.RootFrame;
 
@@ -18,6 +19,7 @@ public class PicgureLauncher {
 	public static void main(String[] args) {
 		logger.info("Starting the Application.");
 		System.setProperty("sun.java2d.uiScale", "1.0");
+		FlatLightLaf.setup();
 		new PicgureAppEventListener().syncSettingsFileStore();
 		new PicgureLauncher().run();
 	}

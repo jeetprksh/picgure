@@ -11,6 +11,7 @@ module picgure {
   requires com.fasterxml.jackson.core;
   requires java.naming;
   requires java.xml.bind;
+  requires com.formdev.flatlaf;
 
   opens com.picgure.persistence.dto to org.hibernate.orm.core;
 }
